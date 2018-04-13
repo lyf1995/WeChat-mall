@@ -11,6 +11,23 @@ export default {
 </script>
 
 <style>
+*{
+    margin: 0;
+    padding: 0;
+  }
+  body {
+      background: #f1f1f1;
+      color: #999999;
+      font-size: 14px;
+  }
+    img[lazy="loading"] {
+    width: 100%;
+    margin: auto;
+    background-repeat:no-repeat;
+    background-position:center;
+    background-size: 50% 50%;
+    /*background-image: url(../../static/img/loading.gif);*/
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -25,4 +42,7 @@ export default {
   height: 0;
   visibility: hidden;
 }
+
+
+
 </style>
