@@ -1,7 +1,7 @@
 <template>
 	<mt-tabbar v-model="selected" fixed>
 	  	<mt-tab-item  v-for="(item,index) in $router.options.routes" v-if="item.menuShow" :id="item.path" :key="index">
-	    	<div class="img_wrap">
+	    	<div class="icon_wrap">
 	    		<i :class="`iconfont ${item.iconClass}`"></i>
 	    	</div>
 	    	<div class="name_wrap">
@@ -29,5 +29,7 @@
   	}
 </script>
 <style scoped>
-
+	.icon_wrap i{
+		font-size: 28px;
+	}
 </style>

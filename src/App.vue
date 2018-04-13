@@ -16,9 +16,9 @@ export default {
     padding: 0;
   }
   body {
-      background: #f1f1f1;
+      /*background: #f1f1f1;*/
       color: #999999;
-      font-size: 14px;
+      font-size: 16px;
   }
     img[lazy="loading"] {
     width: 100%;
