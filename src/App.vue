@@ -43,6 +43,19 @@ export default {
   visibility: hidden;
 }
 
-
-
+/*修改element-ui样式*/
+.el-checkbox__input.is-checked .el-checkbox__inner{
+  background-color: rgb(171, 9, 35);
+  border-color: rgb(171, 9, 35);
+}
+.el-checkbox__input.is-checked+.el-checkbox__label{
+  color: rgb(171, 9, 35);
+}
+.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner{
+  background-color: rgb(171, 9, 35);
+  border-color: rgb(171, 9, 35);
+}
+.el-checkbox__input.is-disabled+span.el-checkbox__label{
+  color: rgb(171, 9, 35);
+}
 </style>
