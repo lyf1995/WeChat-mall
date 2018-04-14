@@ -1,5 +1,5 @@
 <template>
-	<div class="wrap">
+	<div class="home_wrap">
 		<header>
 			<div class="search_wrap">
 				<div class="search_bar">
@@ -16,7 +16,7 @@
 			</div>
 		</header>
 		<div class="product_wrap">
-			<div class="swipe_wrap">
+			<div class="swipe_wrap" v-if="typeId === 0">
 				<mt-swipe :auto="4000">
 				  	<mt-swipe-item><img src="../assets/images/lunbo.jpg"></mt-swipe-item>
 				  	<mt-swipe-item><img src="../assets/images/lunbo.jpg"></mt-swipe-item>
@@ -25,15 +25,15 @@
 			</div>
 			<div class="product_list">
 				<div class="product_item" v-for="item in productList">
-					<div class="title">
+					<div class="title" v-if="typeId === 0">
 						<div class="title_line">
 							<div class="title_name">{{item.CategoryName}}</div>
 						</div>
 					</div>
-					<div class="type_image">
+					<div class="type_image" v-if="typeId === 0">
 						<img src="../assets/images/haixianshuichan.jpg">
 					</div>
-					<div class="product" v-for="(items, index) in item.productInfo" :key="index">
+					<div class="product" v-for="(items, index) in item.productInfo" :key="index" @click="goToDetail(items.id)">
 						<div class="product_img">
 							<img :src="items.productPhoto">
 						</div>
@@ -49,7 +49,7 @@
 								<div class="normal_price">
 									<div class="line"></div>
 									<span>零售价￥:</span>
-									<span>{{(items.marketPrice|formatMoney)+20}}</span>
+									<span>{{items.marketPrice+20|formatMoney}}</span>
 								</div>
 							</div>
 						</div>
@@ -57,11 +57,6 @@
 				</div>
 			</div>
 		</div>
-		
-
-
-
-
 		<tab-bar></tab-bar>
 	</div>
 </template>
@@ -145,11 +140,23 @@
 		methods:{
 			selectType(id){
 				this.typeId = id;
+			},
+			//跳转到商品详情页面
+			goToDetail(id){
+				this.$router.push({
+					path:'/productDetail',
+					query:{
+						productId:id
+					}
+				})
 			}
 		}
 	}
 </script>
 <style scoped>
+	.home_wrap{
+		padding-bottom: 54px;
+	}
 	header{
 		position: fixed;
 		left: 0;
@@ -175,7 +182,6 @@
 	}
 	.product_wrap{
 		padding-top: 97px;
-		padding-bottom: 54px;
 	}
 	.product_type{
 		box-shadow: 0 2px 3px 2px rgba(0, 0, 0, 0.4);
@@ -266,7 +272,7 @@
 	}
 	.vip_price{
 		float: left;
-		color: #c7000a;
+		color: rgb(171, 9, 35);
 	}
 	.vip_price span {
 		display: inline-block;
