@@ -70,17 +70,16 @@
 		font-size: 14px;
 		padding-bottom: 50px;
 		text-align: left;
+		box-sizing: border-box;
+		padding: 50px 0 40px 0;
 	}
 	.top_title{
 		background: rgb(171, 9, 35);
 		font-size: 18px;
-		font-weight: 400;
+		height: 50px;
 	}
 	.manage{
 		font-size: 14px;
-	}
-	.address_wrap{
-		padding: 40px 0 40px 0;
 	}
 	.address_item{
 		padding-bottom: 20px;

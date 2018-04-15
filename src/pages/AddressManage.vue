@@ -26,6 +26,7 @@
 	</div>
 </template>
 <script>
+	import { MessageBox } from 'mint-ui'
 	export default{
 		data(){
 			return{
@@ -59,7 +60,9 @@
 				}
 			},
 			deleteAddress(id){
+				MessageBox.confirm('您确定要删除此地址吗?').then(action => {
 
+				});
 			},
 			gotoEditAddress(id){
 				this.$router.push({
@@ -86,13 +89,16 @@
 		text-align: left;
 		background: #f1f1f1;
 		min-height: 100vh;
+		box-sizing: border-box;
+		padding: 50px 0;
 	}
 	.top_title{
 		background: rgb(171, 9, 35);
 		font-size: 18px;
+		height: 50px;
 	}
 	.address_wrap{
-		padding: 40px 0 50px 0;
+		
 	}
 	.address_item{
 		background: #fff;
