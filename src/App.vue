@@ -51,11 +51,36 @@ export default {
 .el-checkbox__input.is-checked+.el-checkbox__label{
   color: rgb(171, 9, 35);
 }
-.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner{
+.el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
   background-color: rgb(171, 9, 35);
   border-color: rgb(171, 9, 35);
 }
 .el-checkbox__input.is-disabled+span.el-checkbox__label{
   color: rgb(171, 9, 35);
+}
+.shoppingCar_wrap .el-checkbox__inner{
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  line-height: 20px;
+  text-align: center;
+}
+.shoppingCar_wrap .el-checkbox__inner::after{
+  top: 2px;
+  left: 7px;
+  height: 10px;
+}
+.shoppingCar_wrap .el-checkbox__input.is-indeterminate .el-checkbox__inner::before{
+  top: 8px;
+}
+.checkbox_wrap .el-checkbox__label{
+  display: none;
+}
+.shoppingCar_wrap .el-checkbox__input.is-indeterminate .el-checkbox__inner{
+  background: #fff;
+  border-color: #dcdfe6;
+}
+.shoppingCar_wrap .el-checkbox__input.is-indeterminate .el-checkbox__inner::before{
+  display: none;
 }
 </style>

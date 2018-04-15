@@ -1,9 +1,9 @@
 <template>
-	<div class="confirmOrder_wrap">
-		<mt-header title="确认订单" fixed class="top_title">
+	<div class="order_detail_wrap">
+		<mt-header title="订单详情" fixed class="top_title">
 			<mt-button icon="back" slot="left" @click="goBack"></mt-button>
 		</mt-header>
-		<div class="address clearfix" @click="goToClickAddress">
+		<div class="address clearfix">
 			<div class="address_left">
 				<i class="iconfont icon-dizhiguanli"></i>
 			</div>
@@ -15,27 +15,21 @@
 				<div class="address_middle_middle">
 					<span>收货地址：浙江省杭州市西湖区留下街道留和路西河公寓10幢</span>
 				</div>
-				<div class="address_middle_bottom">
-					<span>（请确认您的收货地址）</span>
-				</div>
-			</div>
-			<div class="address_right">
-				>
 			</div>
 		</div>
-		<div class="product_item clearfix" v-for="(item, index) in productList">
+		<div class="product_item clearfix">
 			<div class="product">
 				<div class="product_img">
-					<img :src="item.mainImg">
+					<img :src="product.mainImg">
 				</div>
 				<div class="product_right">
 					<div class="product_right_name">
-						<span>{{item.productName}}</span>
+						<span>{{product.productName}}</span>
 					</div>
 					<div class="product_right_price">
 						<span>￥</span>
-						<span>{{item.price}}</span>
-						<span>x{{item.amount}}</span>
+						<span>{{product.price}}</span>
+						<span>x{{product.amount}}</span>
 					</div>
 				</div>
 			</div>	
@@ -44,25 +38,29 @@
 					<span>买家留言：</span>
 				</div>
 				<div>
-					<input type="text" v-model="item.remark" placeholder="选填：填写内容已和卖家协商确认">
+					<input type="text" v-model="product.remark" placeholder="选填：填写内容已和卖家协商确认">
 				</div>
 			</div>
 			<div class="product_item_total">
 				<div class="product_item_right">
-					<span>共{{item.amount}}件商品</span>
+					<span>共{{product.amount}}件商品</span>
 					<span>小计：</span>
 					<span>￥</span>
-					<span>{{item.amount*item.price}}</span>
+					<span>{{product.amount*product.price}}</span>
 				</div>
 			</div>
-		</div>
-		<div class="total">
-			<div class="total_right">
-				<span>合计：</span>
-				<span>￥</span>
-				<span>{{total}}</span>
-				<span class="submit_order">提交订单</span>
+			<div class="time">
+				<span>创建时间：2017-01-01</span>
 			</div>
+		</div>
+
+
+
+		<div class="footer">
+			<button class="btn_red">付款</button>
+			<button class="btn_red">确认收货</button>
+			<button>删除</button>
+			<button>取消订单</button>
 		</div>
 	</div>
 </template>
@@ -70,59 +68,43 @@
 	export default{
 		data(){
 			return{
-				productList:[
-					{
-						id:1,
-						productName:'智利泰瑞贵族珍藏佳美娜干红葡萄酒750mL',
-						mainImg:'http://www.taiibao.com/upload/f0e/79e/aa57d0df9a40438784e868a86b_54882_800x800.jpg',
-						price:120,
-						amount:1,
-						remark:'哈哈哈',
-					},
-					{
-						id:2,
-						productName:'智利泰瑞贵族珍藏佳美娜干红葡萄酒750mL',
-						mainImg:'http://www.taiibao.com/upload/f0e/79e/aa57d0df9a40438784e868a86b_54882_800x800.jpg',
-						price:120,
-						amount:2,
-						remark:'啊啊啊啊',
-					},
-				],
-				total:0
+				product:{
+					id:1,
+					productName:'智利泰瑞贵族珍藏佳美娜干红葡萄酒750mL',
+					mainImg:'http://www.taiibao.com/upload/f0e/79e/aa57d0df9a40438784e868a86b_54882_800x800.jpg',
+					price:120,
+					amount:1,
+					remark:'哈哈哈',
+				}
 			}
 		},
-		methods:{
+		methods: {
 			goBack(){
-				this.$router.go(-1);
-			},
-			goToClickAddress(){
 				this.$router.push({
-					path:'/clickAddress'
+					path: '/order'
 				})
-			}
-		},
-		mounted(){
-			for(let item of this.productList){
-				this.total+=(item.price*item.amount);
 			}
 		}
 	}
 </script>
 <style scoped>
-	.confirmOrder_wrap{
+	.order_detail_wrap{
+		min-height: 100vh;
 		background: #f1f1f1;
 		font-size: 14px;
-		padding: 50px 0 40px;
+		padding: 50px 0;
 		box-sizing: border-box;
 	}
 	.top_title{
 		background: rgb(171, 9, 35);
 		font-size: 18px;
+		font-weight: 400;
 		height: 50px;
 	}
 	.address{
 		position: relative;
 		background: #fff;
+		padding: 10px 0;
 	}
 	.address_left{
 		position: absolute;
@@ -136,7 +118,7 @@
 	}
 	.address_middle{
 		margin-left: 50px;
-		margin-right: 40px;
+		margin-right: 20px;
 		text-align: left;
 		box-sizing: border-box;
 	}
@@ -157,19 +139,6 @@
 	.address_middle_middle{
 		padding-right: 30px;
 		font-size:12px;
-	}
-	.address_middle_bottom{
-		padding: 10px 20px 10px 0;
-		color: #e6a23c;
-		font-size:10px
-	}
-	.address_right{
-		position: absolute;
-		width:40px;
-		top: 50%;
-		right: 0;
-		transform: translateY(-50%);
-		box-sizing: border-box;
 	}
 	.product_item{
 		text-align: left;
@@ -265,37 +234,36 @@
 		font-size: 16px;
 		color: rgb(171, 9, 35);
 	}
-	.total{
+	.time{
+		height: 30px;
+		line-height: 30px;
+		box-sizing: border-box;
+		border-top: 1px solid #eee;
+	}
+
+
+
+	.footer{
 		position: fixed;
 		bottom: 0;
 		left: 0;
 		width: 100%;
-		height: 40px;
-		line-height: 40px;
-		border-top: 1px solid #ccc;
-		box-sizing: border-box;
+		height: 50px;
 		background: #fff;
+		border-top: 1px solid #eee;
 	}
-	.total_right{
+	.footer button{
 		float: right;
+		padding: 5px 20px;
+		background: #fff;
+		border: 1px solid #666;
+		outline: none;
+		border-radius: 20px;
+		margin-top: 10px;
+		margin-right: 10px;	
 	}
-	.total_right span:nth-child(1){
-		
-	}
-	.total_right span:nth-child(2){
-		font-size: 12px;
+	.btn_red{
 		color: rgb(171, 9, 35);
-	}
-	.total_right span:nth-child(3){
-		font-size: 16px;
-		color: rgb(171, 9, 35);
-	}
-	.submit_order{
-		display: inline-block;
-		width: 100px;
-		height: 100%;
-		color: #fff;
-		background: rgb(171, 9, 35);
-		margin-left: 10px;
+		border-color: rgb(171, 9, 35) !important;
 	}
 </style>

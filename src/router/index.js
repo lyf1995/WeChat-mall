@@ -10,6 +10,12 @@ const ClickAddress = resolve =>require(['@/pages/ClickAddress'], resolve);
 const AddressManage = resolve =>require(['@/pages/AddressManage'], resolve);
 const AddAddress = resolve =>require(['@/pages/AddAddress'], resolve);
 const EditAddress = resolve =>require(['@/pages/EditAddress'], resolve);
+const PersonInfo = resolve =>require(['@/pages/PersonInfo'], resolve);
+const Share = resolve =>require(['@/pages/Share'], resolve);
+const EditPassword = resolve =>require(['@/pages/EditPassword'], resolve);
+const Login = resolve =>require(['@/pages/Login'], resolve);
+const Order = resolve =>require(['@/pages/Order'], resolve);
+const OrderDetail = resolve =>require(['@/pages/OrderDetail'], resolve);
 
 Vue.use(Router)
 
@@ -53,6 +59,18 @@ export default new Router({
         component: ConfirmOrder
     },
     {
+        path: '/order',
+        name: '订单',
+        menuShow: false,
+        component: Order
+    },
+    {
+        path: '/orderDetail',
+        name: '订单',
+        menuShow: false,
+        component: OrderDetail
+    },
+    {
         path: '/clickAddress',
         name: '选择收货地址',
         menuShow: false,
@@ -75,6 +93,30 @@ export default new Router({
         name: '修改地址',
         menuShow: false,
         component: EditAddress
+    },
+    {
+        path: '/personInfo',
+        name: '个人资料',
+        menuShow: false,
+        component: PersonInfo
+    },
+    {
+        path: '/share',
+        name: '我的分享',
+        menuShow: false,
+        component: Share
+    },
+    {
+        path: '/editPassword',
+        name: '修改密码',
+        menuShow: false,
+        component: EditPassword
+    },
+    {
+        path: '/login',
+        name: '登录',
+        menuShow: false,
+        component: Login
     },
   ]
 })
