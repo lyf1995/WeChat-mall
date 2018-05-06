@@ -23,7 +23,7 @@ export default new Router({
   routes: [
     {
         path: '/',
-        redirect:'/home'
+        redirect:'/login'
     },
     {
     	path:'/home',
@@ -66,7 +66,7 @@ export default new Router({
     },
     {
         path: '/orderDetail',
-        name: '订单',
+        name: '订单详情',
         menuShow: false,
         component: OrderDetail
     },
