@@ -11,7 +11,7 @@
 			</mt-swipe>
 		</div>
 		<div class="product_name">
-			<span>{{productInfo.productName}}</span>
+			<span>{{productInfo.name}}</span>
 		</div>
 		<div class="product_subTitle">
 			<span>{{productInfo.subtitle}}</span>
@@ -19,12 +19,12 @@
 		<div class="product_price clearfix">
 			<div class="vip_price">
 				<span>￥</span>
-				<span>{{productInfo.price}}</span>
+				<span>{{productInfo.vipPrice|formatMoney}}</span>
 			</div>
 			<div class="normal_price">
 				<div class="line"></div>
-				<span>价格￥:</span>
-				<span>{{productInfo.price+20}}</span>
+				<span>零售价￥:</span>
+				<span>{{productInfo.retailPrice|formatMoney}}</span>
 			</div>
 		</div>
 		<div class="desc_top">
@@ -33,7 +33,7 @@
 			</div>
 		</div>
 		<div class="description">
-			<img :src="item" v-for="(item, index) in productInfo.description" />
+			<img :src="item" v-for="(item, index) in productInfo.description" :key="index"/>
 		</div>
 		<div class="footer_wrap clearfix">
 			<div @click="modelShow(0)">
@@ -56,11 +56,11 @@
 					</div>
 					<div class="model_product_right">
 						<div class="model_product_name">
-							<span>{{productInfo.productName}}</span>
+							<span>{{productInfo.name}}</span>
 						</div>
 						<div class="model_product_price">
 							<span>￥</span>
-							<span>{{productInfo.price}}</span>
+							<span>{{productInfo.vipPrice|formatMoney}}</span>
 						</div>
 					</div>
 				</div>
@@ -80,7 +80,8 @@
 	</div>
 </template>
 <script>
-	import { Toast } from 'mint-ui';
+	import { SelectCommodityById } from '@/js/api';
+	import { Indicator, Toast } from 'mint-ui';
 	export default{
 		data(){
 			return{
@@ -88,14 +89,18 @@
 				type:0,
 				modelStatus:false,
 				productInfo:{
-					"id": 11,
-					"productName": "智利泰瑞贵族珍藏佳美娜干红葡萄酒750mL",
-					"price": 120.00,
-					"subtitle": "非凡深邃的红宝石颜色，红色浆果、烟草、巧克力和纯净的果香演绎珍藏赤霞珠的盛世繁华、热情而高雅。",
-					"lunboImgs": ["http://www.taiibao.com/upload/f0e/79e/aa57d0df9a40438784e868a86b_54882_800x800.jpg","http://www.taiibao.com/upload/202/d09/c431861d7563dc68d9ae0f799c_43529_800x800.jpg"],
-					"mainImg": "http://www.taiibao.com/upload/f0e/79e/aa57d0df9a40438784e868a86b_54882_800x800.jpg",
-					"description": ["http://www.taiibao.com/upload/a55/6a7/3c307e9efe5e37f454bc6f7638_131957_750x562.jpg","http://www.taiibao.com/upload/6c9/eaa/6e42acab80048f3112b542ae88_151042_750x562.jpg","http://www.taiibao.com/upload/744/e3c/f543affeecb03778ccfa95ff74_176105_750x561.jpg","http://www.taiibao.com/upload/d4c/035/6e90594c269c40dfdfd0bd9b83_74575_750x562.jpg","http://www.taiibao.com/upload/2f5/63e/6d419960f2f6e092eeb998c5ac_43110_750x562.jpg","http://www.taiibao.com/upload/06a/54c/23b04cd7aa0fec5f1f608e50f4_61217_750x562.jpg","http://www.taiibao.com/upload/669/d71/675be30ed5b9d92704dd1c5eac_34858_750x562.jpg","http://www.taiibao.com/upload/55e/39e/8a248baa9ceaa57d8abefb4dd6_56113_750x562.jpg","http://www.taiibao.com/upload/2c2/ceb/0de600dd075cacbe054afa6462_62845_750x562.jpg","http://www.taiibao.com/upload/f25/fb7/a06d8975e229b95cea1bd68e8d_62528_750x561.jpg","http://www.taiibao.com/upload/2b1/f5f/e0ce8d11bb52b57502a34ee83d_99901_750x562.jpg","http://www.taiibao.com/upload/730/fd9/c72039c4e4b00ce03fedee6dac_129811_750x562.jpg","http://www.taiibao.com/upload/84e/2db/96bf0d1297b0515b2c33eed02c_116319_750x562.jpg"],
+					lunboImgs:[],
+					description:[]
 				},
+			}
+		},
+		filters:{
+			formatMoney(val){
+				if(typeof(val)==="number"){
+					return val.toFixed(2);	
+				}else{
+					return val;
+				}
 			}
 		},
 		methods:{
@@ -130,10 +135,27 @@
 						}
 					})
 				}
+			},
+			//根据id查询商品
+			selectCommodityById(id){
+				Indicator.open();
+				SelectCommodityById({id}).then(data => {
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						// this.productInfo = Object.assign(this.productInfo,value);
+						this.productInfo = value;
+					}
+					else{
+						Toast(errMsg);
+					}
+					Indicator.close();
+				})
 			}
 		},
 		mounted(){
 			document.documentElement.scrollTop=0
+			let id = this.$route.query.commodityId;
+			this.selectCommodityById(id);
 		}
 	}
 </script>
@@ -201,7 +223,7 @@
 	.normal_price {
 		position: absolute;
 		top: 50%;
-		left: 90px;
+		left: 110px;
 		transform: translateY(-50%);
 		color: #ccc;
 		margin-left: 20px;

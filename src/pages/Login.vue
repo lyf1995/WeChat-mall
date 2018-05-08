@@ -2,7 +2,7 @@
 	<div class="login_wrap">
 		<mt-header title="微信商城" fixed class="top_title"></mt-header>
 		<div class="content">
-			<mt-navbar v-model="selected" style="top: 40px;" value="1" fixed>
+			<mt-navbar v-model="selected" style="top: 50px;" value="1" fixed>
 			   <mt-tab-item id="1">登录</mt-tab-item>
 			   <mt-tab-item id="2">注册</mt-tab-item>
 			</mt-navbar>

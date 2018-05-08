@@ -4,8 +4,8 @@
 			<div class="photo">
 				<img src="../assets/images/touxiang.jpg" height="300" width="300"/>
 			</div>
-			<div class="phone">17826804660</div>
-			<div class="jifen">积分￥10</div>
+			<div class="phone">{{accountInfo.phone}}</div>
+			<div class="jifen">积分￥{{accountInfo.money}}</div>
 		</div>
 		<div class="order_info">
 			<mt-cell title="我的订单" is-link to="/order" style="border-bottom: 1px solid #e8e8e8;">
@@ -45,6 +45,7 @@
 			</div>
 		</div>	
 		<div class="connect">客服电话：111-111-1111</div>
+		<mt-button type="default" class="btn" @click="exit" size="large">退出登陆</mt-button>
 		<tab-bar></tab-bar>
 	</div>
 </template>
@@ -57,7 +58,7 @@
 		},
 		data(){
 			return{
-				
+				accountInfo:{}
 			}
 		},
 		methods:{
@@ -73,8 +74,16 @@
 				this.$router.push({
 					path: '/'+path
 				});
+			},
+			exit(){
+				this.$router.push({
+					path: '/login'
+				})
 			}
 		},
+		mounted(){
+			this.accountInfo = this.$store.state.accountInfo;
+		}
 	}
 </script>
 <style scoped>

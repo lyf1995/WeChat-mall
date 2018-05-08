@@ -4,6 +4,7 @@ import Router from 'vue-router'
 const Home = resolve =>require(['@/pages/Home'], resolve);
 const ShoppingCar = resolve =>require(['@/pages/ShoppingCar'], resolve);
 const Mine = resolve =>require(['@/pages/Mine'], resolve);
+const Search = resolve =>require(['@/pages/Search'], resolve);
 const ProductDetail = resolve =>require(['@/pages/ProductDetail'], resolve);
 const ConfirmOrder = resolve =>require(['@/pages/ConfirmOrder'], resolve);
 const ClickAddress = resolve =>require(['@/pages/ClickAddress'], resolve);
@@ -45,6 +46,12 @@ export default new Router({
     	menuShow:true,
     	iconClass:'icon-wode',
         component:Mine
+    },
+    {
+        path:'/search',
+        name:'搜索',
+        menuShow:false,
+        component:Search
     },
     {
         path: '/productDetail',

@@ -2,7 +2,7 @@
 	<div class="home_wrap">
 		<header>
 			<div class="search_wrap">
-				<div class="search_bar">
+				<div class="search_bar" @click="goToSearch">
 					<span>搜索</span>
 				</div>
 			</div>
@@ -23,71 +23,28 @@
 				  	<mt-swipe-item><img src="../assets/images/lunbo.jpg"></mt-swipe-item>
 				</mt-swipe>
 			</div>
-			<!-- <div class="product_list">
-				<div class="product_item" v-for="item in productList">
-					<div class="title" v-if="typeId === 0">
-						<div class="title_line">
-							<div class="title_name">{{item.typeName}}</div>
-						</div>
+			<div class="product_list">
+				<div class="product" v-for="(item, index) in productList" :key="index" @click="goToDetail(item.id)">
+					<div class="product_img">
+						<img :src="item.mainImage">
 					</div>
-					<div class="type_image" v-if="typeId === 0">
-						<img src="../assets/images/haixianshuichan.jpg">
-					</div>
-					<div class="product" v-for="(items, index) in item.productInfo" :key="index" @click="goToDetail(items.id)">
-						<div class="product_img">
-							<img :src="items.productPhoto">
+					<div class="product_info">
+						<div class="product_name">
+							{{item.name}}
 						</div>
-						<div class="product_info">
-							<div class="product_name">
-								{{items.productName}}
+						<div class="product_price">
+							<div class="vip_price">
+								<span>会员价￥</span>
+								<span>{{item.vipPrice|formatMoney}}</span>
 							</div>
-							<div class="product_price">
-								<div class="vip_price">
-									<span>会员价￥:</span>
-									<span>{{items.marketPrice}}</span>
-								</div>
-								<div class="normal_price">
-									<div class="line"></div>
-									<span>零售价￥:</span>
-									<span>{{items.marketPrice+20|formatMoney}}</span>
-								</div>
+							<div class="normal_price">
+								<div class="line"></div>
+								<span>零售价￥</span>
+								<span>{{item.retailPrice|formatMoney}}</span>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div> -->
-			<div class="product_list">
-				<!-- <div class="product_item"> -->
-					<!-- <div class="title" v-if="typeId === 0">
-						<div class="title_line">
-							<div class="title_name">{{item.typeName}}</div>
-						</div>
-					</div>
-					<div class="type_image" v-if="typeId === 0">
-						<img src="../assets/images/haixianshuichan.jpg">
-					</div> -->
-					<div class="product" v-for="(item, index) in productList" :key="index" @click="goToDetail(items.id)">
-						<div class="product_img">
-							<img :src="item.mainImage">
-						</div>
-						<div class="product_info">
-							<div class="product_name">
-								{{items.name}}
-							</div>
-							<div class="product_price">
-								<div class="vip_price">
-									<span>会员价￥:</span>
-									<span>{{items.vipPrice|formatMoney}}</span>
-								</div>
-								<div class="normal_price">
-									<div class="line"></div>
-									<span>零售价￥:</span>
-									<span>{{items.retailPrice|formatMoney}}</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				<!-- </div> -->
 			</div>
 		</div>
 		<tab-bar></tab-bar>
@@ -96,6 +53,7 @@
 <script>
 	import { SelectAllType, SelectCommodityByTypeId } from '@/js/api'
 	import TabBar from '@/components/TabBar'
+	import { Indicator, Toast } from 'mint-ui';
 
 	export default{
 		components:{
@@ -127,28 +85,43 @@
 						this.typeList = value;
 					}
 					else{
-						this.$message({
-							message: errMsg,
-							type: 'error'
-						})
+						Toast(errMsg);
 					}
 				});
 			},
 			selectType(id){
+				Indicator.open();
 				this.typeId = id;
+				SelectCommodityByTypeId({typeId:this.typeId}).then(data =>{
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						this.productList = value;
+					}
+					else{
+						Toast(errMsg);
+					}
+					Indicator.close();
+				});
 			},
 			//跳转到商品详情页面
 			goToDetail(id){
 				this.$router.push({
 					path:'/productDetail',
 					query:{
-						productId:id
+						commodityId:id
 					}
 				})
-			}
+			},
+			//跳转到搜索页面
+			goToSearch(){
+				this.$router.push('/search')
+			},
 		},
 		mounted(){
+			//查询所有分类
 			this.selectAllType();
+			//查询推荐商品
+			this.selectType(this.typeId);
 		}
 	}
 </script>
@@ -206,10 +179,11 @@
 	    font-size: 18px;
 	}
 	.swipe_wrap{
-		height: 160px;
+		height: 180px;
 	}
 	.swipe_wrap img{
 		width: 100%;
+		max-height: 180px;
 	}
 	.title{
 		height: 42px;
