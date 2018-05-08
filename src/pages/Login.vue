@@ -21,6 +21,7 @@
 			<mt-tab-container-item id="2">
 			    <mt-field label="" placeholder="请输入手机号" v-model="registraInfo.phone"></mt-field>
 				<mt-field label="" type="password" placeholder="请输入密码" v-model="registraInfo.password"></mt-field>
+				<mt-field label="" type="password" placeholder="请确认密码" v-model="registraInfo.comfirmPassword"></mt-field>
 				<mt-field label="" placeholder="短信验证码" v-model="registraInfo.SMScode">
 			  		<mt-button type="default"  size="small" style="width: 100px;margin-left: 10px;">获取验证码</mt-button>
 				</mt-field>
@@ -31,7 +32,7 @@
 	</div>
 </template>
 <script>
-	import { Login } from '@/js/api'
+	import { Login, Regist } from '@/js/api'
 	import { Toast } from 'mint-ui';
 	export default{
 		data(){
@@ -39,19 +40,21 @@
 				selected:'1',
 				loginInfo:{
 					phone: '',
-					password: ''
+					password: '',
+					type: 1
 				},
 				registraInfo:{
 					phone: '',
 					password: '',
-					SMScode: ''
+					SMScode: '',
+					type: 1
 				},
 			}
 		},
 		methods:{
 			loginSubmit(){
 				let _this = this;
-				var params = JSON.parse(JSON.stringify(this.loginInfo));
+				let params = JSON.parse(JSON.stringify(this.loginInfo));
 				Login(params).then(data => {
 					let {errMsg, errCode, value, extraInfo, success} = data;
 					if(success){
@@ -64,6 +67,37 @@
 				});
 			},
 			registerSubmit(){
+				let _this = this;
+				if(this.registraInfo.phone == '' || !(/^1[0-9]{10}$/.test(this.registraInfo.phone))){
+					Toast('请输入正确的手机号');
+				}
+				else if(this.registraInfo.password == ''){
+					Toast('请输入密码');
+				}
+				else if(this.registraInfo.password != this.registraInfo.comfirmPassword){
+					Toast('两次密码不一致');
+				}
+				else{
+					let params = JSON.parse(JSON.stringify(this.registraInfo));
+					Regist(params).then(data => {
+						let {errMsg, errCode, value, extraInfo, success} = data;
+						if(success){
+							Login(params).then(data => {
+								let {errMsg, errCode, value, extraInfo, success} = data;
+								if(success){
+									_this.$store.commit('keepAccount', value);
+									_this.$router.push({path: '/home'});
+								}
+								else{
+									Toast(errMsg);
+								}
+							});
+						}
+						else{
+							Toast(errMsg);
+						}
+					});
+				}
 				
 			}
 		}
