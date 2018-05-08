@@ -9,7 +9,7 @@
 			<!-- tab-container -->
 			<mt-tab-container v-model="selected">
 			  	<mt-tab-container-item id="1">
-			    	<mt-field label="" placeholder="手机号" v-model="loginInfo.mobile"></mt-field>
+			    	<mt-field label="" placeholder="手机号" v-model="loginInfo.phone"></mt-field>
 			    	<mt-field label="" placeholder="密码" type="password" v-model="loginInfo.password"></mt-field>
 			    	<div class="forgetPwd">
 			    		<span @click="$router.push({path:'/editPwd',query:''})">
@@ -19,7 +19,7 @@
 			    	<mt-button type="default" class="btn" @click="loginSubmit" size="large">登录</mt-button>
 			  	</mt-tab-container-item>
 			<mt-tab-container-item id="2">
-			    <mt-field label="" placeholder="请输入手机号" v-model="registraInfo.mobile"></mt-field>
+			    <mt-field label="" placeholder="请输入手机号" v-model="registraInfo.phone"></mt-field>
 				<mt-field label="" type="password" placeholder="请输入密码" v-model="registraInfo.password"></mt-field>
 				<mt-field label="" placeholder="短信验证码" v-model="registraInfo.SMScode">
 			  		<mt-button type="default"  size="small" style="width: 100px;margin-left: 10px;">获取验证码</mt-button>
@@ -31,19 +31,40 @@
 	</div>
 </template>
 <script>
+	import { Login } from '@/js/api'
+	import { Toast } from 'mint-ui';
 	export default{
 		data(){
 			return{
 				selected:'1',
 				loginInfo:{
-					mobile: '',
+					phone: '',
 					password: ''
 				},
 				registraInfo:{
-					mobile: '',
+					phone: '',
 					password: '',
 					SMScode: ''
 				},
+			}
+		},
+		methods:{
+			loginSubmit(){
+				let _this = this;
+				var params = JSON.parse(JSON.stringify(this.loginInfo));
+				Login(params).then(data => {
+					let {errMsg, errCode, value, extraInfo, success} = data;
+					if(success){
+						_this.$store.commit('keepAccount', value);
+						_this.$router.push({path: '/home'});
+					}
+					else{
+						Toast(errMsg);
+					}
+				});
+			},
+			registerSubmit(){
+				
 			}
 		}
 	}
