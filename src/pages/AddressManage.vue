@@ -10,7 +10,7 @@
 					<span>{{item.phone}}</span>
 				</div>
 				<div class="address_item_middle">
-					<span>[默认地址]</span>
+					<span v-show="item.isDefault == 1">[默认地址]</span>
 					<span>{{item.province+item.city+item.area+item.detailAddress}}</span>
 				</div>
 				<div class="address_item_bottom">

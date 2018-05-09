@@ -34,7 +34,8 @@
 						</div>
 						<div class="product_price">
 							<div class="vip_price">
-								<span>会员价￥</span>
+								<span>￥</span>
+								<!-- <span>会员价￥</span> -->
 								<span>{{item.vipPrice|formatMoney}}</span>
 							</div>
 							<div class="normal_price">

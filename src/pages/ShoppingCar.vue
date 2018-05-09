@@ -53,18 +53,18 @@
 							</div>
 							<div class="product">
 								<div class="product_img">
-									<img :src="item.mainImg">
+									<img :src="item.goodsMainImage">
 								</div>
 								<div class="product_right">
 									<div class="product_right_name">
-										<span>{{item.productName}}</span>
+										<span>{{item.goodsName}}</span>
 									</div>
 									<div class="product_right_price">
 										<span>￥</span>
-										<span>{{item.price}}</span>
+										<span>{{item.goodsVipPrice}}</span>
 										<div class="amount">
 											<span @click="opAmount(-1,item)">-</span>
-											<span>{{item.amount}}</span>
+											<span>{{item.goodsNumber}}</span>
 											<span @click="opAmount(1,item)">+</span>
 										</div>
 									</div>
@@ -98,19 +98,30 @@
 				isIndeterminate: true,
 				checkAll: false,
 				checkedProducts: [],
-				products: [11,12],
+				products: [],
 				totalAmount: 0,
 				totalMoney: 0
 			}
 		},
 		methods:{
 			opAmount(op,item){
-				if(item.amount === 1&&op === -1)
+				if(item.goodsNumber === 1&&op === -1)
 					return;
 				else{
-					item.amount+=op;
-					this.getTotal();
-				}
+					item.goodsNumber+=op;
+					let params = {};
+					params.id = item.id;
+					params.goodsNumber = item.goodsNumber;
+					UpdateShoppingCar(params).then(data => {
+						let { errMsg, errCode, value, success, extraInfo } = data;
+						if(success){
+							this.getTotal();
+						}
+						else{
+							Toast(errMsg);
+						}
+					});
+				}	
 			},
 			checkAllChange(val){
 				this.checkedProducts = val ? this.products : [];
@@ -130,8 +141,8 @@
 				for(let id of this.checkedProducts){
 					for(let item of this.shoppingCarList){
 						if(id === item.id){
-							amount = amount + item.amount;
-							money = money + amount*item.price;
+							amount = amount + item.goodsNumber;
+							money = money + amount*item.goodsVipPrice;
 						}
 					}
 				}
@@ -151,7 +162,22 @@
 			},
 			//删除购物车
 			deleteCar(){
-				console.log(this.checkedProducts);
+				// console.log(this.checkedProducts);
+				let params = [];
+				for(let item of this.checkedProducts){
+					params.push({id: item});
+				}
+				DeleteShoppingCar(params).then(data => {
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						Toast('删除成功');
+						this.getShoppingCarInfoList();
+					}
+					else{
+						Toast('删除失败');
+					}
+				});
+				
 			},
 			getShoppingCarInfoList(){
 				let params = {};
@@ -160,6 +186,9 @@
 					let { errMsg, errCode, value, success, extraInfo } = data;
 					if(success){
 						this.shoppingCarList = value;
+						for(let item of this.shoppingCarList){
+							this.products.push(item.id);
+						}
 					}
 					else{
 						Toast(errMsg);
