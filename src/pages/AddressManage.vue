@@ -6,15 +6,15 @@
 		<div class="address_wrap">
 			<div class="address_item" v-for="(item ,indx) in addressList">
 				<div class="address_item_top clearfix">
-					<span>收货人：{{item.name}}</span>
+					<span>收货人：{{item.contacts}}</span>
 					<span>{{item.phone}}</span>
 				</div>
 				<div class="address_item_middle">
 					<span>[默认地址]</span>
-					<span>{{item.address+item.addressDetail}}</span>
+					<span>{{item.province+item.city+item.area+item.detailAddress}}</span>
 				</div>
 				<div class="address_item_bottom">
-					<el-checkbox label="设为默认" @click="setDefault(id)" v-model="item.isDefault" :disabled="item.isDefault===true"></el-checkbox>
+					<el-checkbox label="设为默认" @click="setDefault(id)" v-model="item.isDefault"></el-checkbox>
 					<span @click="deleteAddress(item.id)"><i class="iconfont icon-shanchu"></i>删除</span>
 					<span @click="gotoEditAddress(item.id)"><i class="iconfont icon-xiugai07"></i>编辑</span>
 				</div>
@@ -26,33 +26,49 @@
 	</div>
 </template>
 <script>
-	import { MessageBox } from 'mint-ui'
+	import { SelectAllAddress, DeleteAddress } from '@/js/api'
+	import { MessageBox, Toast } from 'mint-ui'
 	export default{
 		data(){
 			return{
+				accountInfo:{},
 				addressList:[
-					{
-						id:1,
-						name:'鲁钺锋',
-						phone:'17826804660',
-						address:'浙江省杭州市西湖区',
-						addressDetail:'留下街道留和路西河公寓10幢',
-						isDefault:true,
-					},
-					{
-						id:2,
-						name:'鲁钺锋',
-						phone:'17826804660',
-						address:'浙江省杭州市西湖区',
-						addressDetail:'留下街道留和路西河公寓10幢',
-						isDefault:false,
-					}
+					// {
+					// 	id:1,
+					// 	name:'鲁钺锋',
+					// 	phone:'17826804660',
+					// 	address:'浙江省杭州市西湖区',
+					// 	addressDetail:'留下街道留和路西河公寓10幢',
+					// 	isDefault:true,
+					// },
 				]
 			}
 		},
 		methods:{
+
 			goBack(){
 				this.$router.go(-1);
+			},
+			getAddressInfoList(){
+				let params = {};
+				params.userId = this.accountInfo.id;
+				SelectAllAddress(params).then(data => {
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						this.addressList = value;
+						for(let item of this.addressList){
+							if(item.isDefault == 0){
+								item.isDefault = false;
+							}
+							else{
+								item.isDefault = true;
+							}
+						}
+					}
+					else{
+						Toast(errMsg);
+					}
+				})
 			},
 			setDefault(item){
 				if(item.isDefault){
@@ -61,7 +77,21 @@
 			},
 			deleteAddress(id){
 				MessageBox.confirm('您确定要删除此地址吗?').then(action => {
-
+					DeleteAddress({id}).then(data =>{
+						let { errMsg, errCode, value, success, extraInfo } = data;
+						if(success){
+							this.$message({
+								message: '删除成功',
+								type: 'success'
+							})
+							this.getAddressInfoList();
+						}else{
+							this.$message({
+								message: '删除失败',
+								type: 'error'
+							})
+						}
+					});
 				});
 			},
 			gotoEditAddress(id){
@@ -79,7 +109,8 @@
 			}
 		},
 		mounted(){
-
+			this.accountInfo = this.$store.state.accountInfo;
+			this.getAddressInfoList();
 		}
 	}
 </script>

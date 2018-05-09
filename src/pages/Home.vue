@@ -61,6 +61,7 @@
 		},
 		data(){
 			return{
+				accountInfo: {},
 				//分类选中项
 				typeId:0,
 				productList:[],
@@ -108,7 +109,8 @@
 				this.$router.push({
 					path:'/productDetail',
 					query:{
-						commodityId:id
+						commodityId:id,
+						userId: this.accountInfo.id
 					}
 				})
 			},
@@ -122,6 +124,7 @@
 			this.selectAllType();
 			//查询推荐商品
 			this.selectType(this.typeId);
+			this.accountInfo = this.$store.state.accountInfo;
 		}
 	}
 </script>

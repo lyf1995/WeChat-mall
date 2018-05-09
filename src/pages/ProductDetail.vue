@@ -80,15 +80,16 @@
 	</div>
 </template>
 <script>
-	import { SelectCommodityById } from '@/js/api';
+	import { SelectCommodityById, AddShoppingCar } from '@/js/api';
 	import { Indicator, Toast } from 'mint-ui';
 	export default{
 		data(){
 			return{
-				amount:1,
-				type:0,
-				modelStatus:false,
-				productInfo:{
+				accountInfo: {},
+				amount: 1,
+				type: 0,
+				modelStatus: false,
+				productInfo: {
 					lunboImgs:[],
 					description:[]
 				},
@@ -124,7 +125,20 @@
 			confirm(){
 				if(this.type === 0){
 					this.modelStatus=false;
-					Toast('添加成功,在购物车等亲~');
+					let params = {};
+					params.userId = this.accountInfo.id;
+					params.goodsId = this.productInfo.id;
+					params.goodsNumber = this.amount;
+					console.log(params);
+					AddShoppingCar(params).then(data => {
+						let { errMsg, errCode, value, success, extraInfo } = data;
+						if(success){
+							Toast('添加成功,在购物车等亲~');
+						}
+						else{
+							Toast('添加失败');
+						}
+					});
 				}
 				else{
 					this.$router.push({
@@ -154,8 +168,9 @@
 		},
 		mounted(){
 			document.documentElement.scrollTop=0
-			let id = this.$route.query.commodityId;
-			this.selectCommodityById(id);
+			this.accountInfo = this.$store.state.accountInfo;
+			let commodityId = this.$route.query.commodityId;
+			this.selectCommodityById(commodityId);
 		}
 	}
 </script>

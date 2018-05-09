@@ -7,7 +7,7 @@
 		</mt-header>
 		<div class="content">
 			<div class="head-portrait">头像<img src="../assets/images/touxiang.jpg"/></div>
-			<mt-cell title="手机号" :value="personInfo.phone"></mt-cell>
+			<mt-cell title="手机号" :value="accountInfo.phone"></mt-cell>
 			<mt-cell title="密码" value="修改密码" is-link></mt-cell>
 			<mt-button class="logout_btn" size="large" @click="logout">退出登录</mt-button>
 		</div>
@@ -19,9 +19,9 @@
 		name: 'MyData',
 		data() {
 			return {
-				personInfo: {
+				accountInfo: {
 					img: '../assets/images/touxiang.jpg',
-					phone: '11111111111'
+					phone: ''
 				}
 			}
 		},
@@ -39,7 +39,7 @@
 
 		},
 		mounted() {
-			
+			this.accountInfo = this.$store.state.accountInfo;
 		}
 	}
 </script>

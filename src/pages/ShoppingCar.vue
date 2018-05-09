@@ -8,24 +8,24 @@
 			</mt-header>
 			<div class="product_wrap">
 					<el-checkbox-group v-model="checkedProducts" @change="checkedProductsChange">
-						<div class="product_item" v-for="(item, index) in productList">
+						<div class="product_item" v-for="(item, index) in shoppingCarList">
 							<div class="checkbox_wrap">
 								<el-checkbox :key="item.id" class="middle" :label="item.id"></el-checkbox>
 							</div>
 							<div class="product">
 								<div class="product_img">
-									<img :src="item.mainImg">
+									<img :src="item.goodsMainImage">
 								</div>
 								<div class="product_right">
 									<div class="product_right_name">
-										<span>{{item.productName}}</span>
+										<span>{{item.goodsName}}</span>
 									</div>
 									<div class="product_right_price">
 										<span>￥</span>
-										<span>{{item.price}}</span>
+										<span>{{item.goodsVipPrice}}</span>
 										<div class="amount">
 											<span @click="opAmount(-1,item)">-</span>
-											<span>{{item.amount}}</span>
+											<span>{{item.goodsNumber}}</span>
 											<span @click="opAmount(1,item)">+</span>
 										</div>
 									</div>
@@ -47,7 +47,7 @@
 			</mt-header>
 			<div class="product_wrap">
 					<el-checkbox-group v-model="checkedProducts" @change="checkedProductsChange">
-						<div class="product_item" v-for="(item, index) in productList">
+						<div class="product_item" v-for="(item, index) in shoppingCarList">
 							<div class="checkbox_wrap">
 								<el-checkbox :key="item.id" class="middle" :label="item.id"></el-checkbox>
 							</div>
@@ -82,6 +82,7 @@
 	</div>
 </template>
 <script>
+	import { SelectAllShoppingCar, AddShoppingCar, DeleteShoppingCar, UpdateShoppingCar } from '@/js/api'
 	import TabBar from '@/components/TabBar'
 	import { Toast } from 'mint-ui';
 
@@ -91,23 +92,9 @@
 		},
 		data(){
 			return{
+				accountInfo: {},
 				deleteStatus:false,
-				productList:[
-					{
-						"id": 11,
-						"productName": "智利泰瑞贵族珍藏佳美娜干红葡萄酒750mL",
-						"price": 120.00,
-						"amount": 1,
-						"mainImg": "http://www.taiibao.com/upload/f0e/79e/aa57d0df9a40438784e868a86b_54882_800x800.jpg",
-					},
-					{
-						"id": 12,
-						"productName": "智利泰瑞贵族珍藏佳美娜干红葡萄酒750mL",
-						"price": 120.00,
-						"amount": 2,
-						"mainImg": "http://www.taiibao.com/upload/f0e/79e/aa57d0df9a40438784e868a86b_54882_800x800.jpg",
-					}
-				],
+				shoppingCarList:[],
 				isIndeterminate: true,
 				checkAll: false,
 				checkedProducts: [],
@@ -141,7 +128,7 @@
 				let amount = 0;
 				let money = 0
 				for(let id of this.checkedProducts){
-					for(let item of this.productList){
+					for(let item of this.shoppingCarList){
 						if(id === item.id){
 							amount = amount + item.amount;
 							money = money + amount*item.price;
@@ -165,7 +152,24 @@
 			//删除购物车
 			deleteCar(){
 				console.log(this.checkedProducts);
-			}
+			},
+			getShoppingCarInfoList(){
+				let params = {};
+				params.userId = this.accountInfo.id;
+				SelectAllShoppingCar(params).then(data => {
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						this.shoppingCarList = value;
+					}
+					else{
+						Toast(errMsg);
+					}
+				})
+			},
+		},
+		mounted(){
+			this.accountInfo = this.$store.state.accountInfo;
+			this.getShoppingCarInfoList();
 		}
 	}
 </script>
