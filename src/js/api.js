@@ -18,6 +18,8 @@ export const SelectCommodityByName = params=>{ return axios.post(`${base}/commod
 export const SelectAllAddress = params=>{ return axios.post(`${base}/address/selectAllAddress`, params).then(res => res.data).catch(error=>error); };
 //根据地址id查询地址信息
 export const SelectAddressById = params=>{ return axios.post(`${base}/address/selectAddressById`, params).then(res => res.data).catch(error=>error); };
+//根据用户id查询默认地址
+export const SelectDefaultAddressByUserId = params=>{ return axios.post(`${base}/address/selectDefaultAddressByUserId`, params).then(res => res.data).catch(error=>error); };
 //新增收货地址
 export const AddAddress = params=>{ return axios.post(`${base}/address/addAddress`, params).then(res => res.data).catch(error=>error); };
 //修改收货地址

@@ -7,12 +7,12 @@
 		<div class="address_wrap">
 			<div class="address_item" v-for="(item ,indx) in addressList">
 				<div class="address_middle_top clearfix">
-					<span>收货人：{{item.name}}</span>
+					<span>收货人：{{item.contacts}}</span>
 					<span>{{item.phone}}</span>
 				</div>
 				<div class="address_middle_middle">
-					<span>[默认地址]</span>
-					<span>{{item.address+item.addressDetail}}</span>
+					<span v-show="item.isDefault == 1">[默认地址]</span>
+					<span>{{item.province+item.city+item.area+item.detailAddress}}</span>
 				</div>
 			</div>
 		</div>
@@ -22,32 +22,17 @@
 	</div>
 </template>
 <script>
+	import { SelectAllAddress } from '@/js/api'
 	export default{
 		data(){
 			return{
-				addressList:[
-					{
-						id:1,
-						name:'鲁钺锋',
-						phone:'17826804660',
-						address:'浙江省杭州市西湖区',
-						addressDetail:'留下街道留和路西河公寓10幢'
-					},
-					{
-						id:2,
-						name:'鲁钺锋',
-						phone:'17826804660',
-						address:'浙江省杭州市西湖区',
-						addressDetail:'留下街道留和路西河公寓10幢'
-					}
-				]
+				accountInfo: {},
+				addressList:[]
 			}
 		},
 		methods:{
 			goBack(){
-				this.$router.push({
-					path: '/confirmOrder'
-				})
+				this.$router.go(-1);
 			},
 			gotoEditAddress(){
 				this.$router.push({
@@ -58,10 +43,22 @@
 				this.$router.push({
 					path:'/addAddress'
 				})
+			},
+			selectAllAddress(userId){
+				SelectAllAddress({userId}).then(data => {
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						this.addressList = value;
+					}
+					else{
+						Toast('查询失败');
+					}
+				});
 			}
 		},
 		mounted(){
-
+			this.accountInfo = this.$store.state.accountInfo;
+			this.selectAllAddress(this.accountInfo.id);
 		}
 	}
 </script>

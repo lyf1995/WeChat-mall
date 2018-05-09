@@ -7,17 +7,20 @@
 			<div class="address_left">
 				<i class="iconfont icon-dizhiguanli"></i>
 			</div>
-			<div class="address_middle">
+			<div class="address_middle" v-if="JSON.stringify(addressInfo)!='{}'">
 				<div class="address_middle_top clearfix">
-					<span>收货人：鲁钺锋</span>
-					<span>17826804660</span>
+					<span>收货人：{{addressInfo.contacts}}</span>
+					<span>{{addressInfo.phone}}</span>
 				</div>
 				<div class="address_middle_middle">
-					<span>收货地址：浙江省杭州市西湖区留下街道留和路西河公寓10幢</span>
+					<span>收货地址：{{addressInfo.province+addressInfo.city+addressInfo.area+addressInfo.detailAddress}}</span>
 				</div>
 				<div class="address_middle_bottom">
 					<span>（请确认您的收货地址）</span>
 				</div>
+			</div>
+			<div class="address_none" v-else>
+				<span>请选择收货地址</span>
 			</div>
 			<div class="address_right">
 				>
@@ -34,26 +37,26 @@
 					</div>
 					<div class="product_right_price">
 						<span>￥</span>
-						<span>{{item.price}}</span>
+						<span>{{item.vipPrice}}</span>
 						<span>x{{item.amount}}</span>
 					</div>
 				</div>
 			</div>	
-			<div class="remarks">
-				<div>
-					<span>买家留言：</span>
-				</div>
-				<div>
-					<input type="text" v-model="item.remark" placeholder="选填：填写内容已和卖家协商确认">
-				</div>
-			</div>
 			<div class="product_item_total">
 				<div class="product_item_right">
 					<span>共{{item.amount}}件商品</span>
 					<span>小计：</span>
 					<span>￥</span>
-					<span>{{item.amount*item.price}}</span>
+					<span>{{item.amount*item.vipPrice}}</span>
 				</div>
+			</div>
+		</div>
+		<div class="remarks">
+			<div>
+				<span>买家留言：</span>
+			</div>
+			<div>
+				<input type="text" v-model="remark" placeholder="选填：填写内容已和卖家协商确认">
 			</div>
 		</div>
 		<div class="total">
@@ -67,27 +70,14 @@
 	</div>
 </template>
 <script>
+	import { SelectDefaultAddressByUserId } from '@/js/api';
 	export default{
 		data(){
 			return{
-				productList:[
-					{
-						id:1,
-						productName:'智利泰瑞贵族珍藏佳美娜干红葡萄酒750mL',
-						mainImg:'http://www.taiibao.com/upload/f0e/79e/aa57d0df9a40438784e868a86b_54882_800x800.jpg',
-						price:120,
-						amount:1,
-						remark:'哈哈哈',
-					},
-					{
-						id:2,
-						productName:'智利泰瑞贵族珍藏佳美娜干红葡萄酒750mL',
-						mainImg:'http://www.taiibao.com/upload/f0e/79e/aa57d0df9a40438784e868a86b_54882_800x800.jpg',
-						price:120,
-						amount:2,
-						remark:'啊啊啊啊',
-					},
-				],
+				accountInfo: {},
+				addressInfo: {},
+				productList:[],
+				remark: '',
 				total:0
 			}
 		},
@@ -99,12 +89,27 @@
 				this.$router.push({
 					path:'/clickAddress'
 				})
+			},
+			selectDefaultAddressByUserId(userId){
+				SelectDefaultAddressByUserId({userId}).then(data => {
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						this.addressInfo = value;
+					}
+					else{
+						Toast('查询失败')
+					}
+				});
 			}
 		},
 		mounted(){
+			this.accountInfo = this.$store.state.accountInfo;
+			this.productList = JSON.parse(this.$route.query.productInfo);
+			console.log(this.productList);
 			for(let item of this.productList){
-				this.total+=(item.price*item.amount);
+				this.total+=(item.vipPrice*item.amount);
 			}
+			this.selectDefaultAddressByUserId(this.accountInfo.id);
 		}
 	}
 </script>
@@ -114,6 +119,7 @@
 		font-size: 14px;
 		padding: 50px 0 40px;
 		box-sizing: border-box;
+		height: 100vh;
 	}
 	.top_title{
 		background: rgb(171, 9, 35);
@@ -170,6 +176,11 @@
 		right: 0;
 		transform: translateY(-50%);
 		box-sizing: border-box;
+	}
+	.address_none{
+		height: 94px;
+		line-height: 94px;
+		text-align: center;
 	}
 	.product_item{
 		text-align: left;
@@ -231,6 +242,7 @@
 		height: 50px;
 		box-sizing: border-box;
 		line-height: 50px;
+		background: #fff;
 	}
 	.remarks div:nth-child(1){
 		float:left;

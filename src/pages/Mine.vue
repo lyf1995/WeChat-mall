@@ -44,7 +44,6 @@
 				<p>我的分享</p>
 			</div>
 		</div>	
-		<div class="connect">客服电话：111-111-1111</div>
 		<mt-button type="default" class="btn" @click="exit" size="large">退出登陆</mt-button>
 		<tab-bar></tab-bar>
 	</div>
@@ -94,6 +93,7 @@
 		min-height: 100vh;
 		text-align: left;
 		overflow: hidden;
+		box-sizing: border-box;
 	}
 	.person_info{
 		background: #c7000a url(../assets/images/my-bk.png) bottom center no-repeat;

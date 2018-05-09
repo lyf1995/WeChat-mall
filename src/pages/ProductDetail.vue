@@ -27,6 +27,9 @@
 				<span>{{productInfo.retailPrice|formatMoney}}</span>
 			</div>
 		</div>
+		<div class="product_stock">
+			<span>库存：{{productInfo.stock}}&nbsp;&nbsp;件</span>
+		</div>
 		<div class="desc_top">
 			<div class="desc_line">
 				<div class="title_name"><span>详情</span></div>
@@ -144,8 +147,15 @@
 					this.$router.push({
 						path:'/confirmOrder',
 						query:{
-							productId:this.productInfo.id,
-							amount:this.amount
+							productInfo: JSON.stringify([
+								{
+									productId: this.productInfo.id,
+									productName: this.productInfo.name,
+									mainImg: this.productInfo.mainImg,
+									vipPrice: this.productInfo.vipPrice,
+									amount: this.amount
+								}
+							])
 						}
 					})
 				}
@@ -218,6 +228,10 @@
 	    color: #666;
 	    word-break: break-all;
 	    word-wrap: break-word;
+	}
+	.product_stock{
+		padding: 10px;
+		color: #666;
 	}
 	.product_price{
 		position: relative;
