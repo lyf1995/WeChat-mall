@@ -34,3 +34,7 @@ export const AddShoppingCar = params=>{ return axios.post(`${base}/shoppingCar/a
 export const DeleteShoppingCar = params=>{ return axios.post(`${base}/shoppingCar/deleteShoppingCar`, params).then(res => res.data).catch(error=>error); };
 //修改购物车
 export const UpdateShoppingCar = params=>{ return axios.post(`${base}/shoppingCar/updateShoppingCar`, params).then(res => res.data).catch(error=>error); };
+//添加订单
+export const AddOrder = params=>{ return axios.post(`${base}/order/addOrder`, params).then(res => res.data).catch(error=>error); };
+//根据userId查询用户信息
+export const SelectUserById = params =>{ return axios.post(`${base}/user/selectUserById`, params).then(res => res.data).catch(error => error); };

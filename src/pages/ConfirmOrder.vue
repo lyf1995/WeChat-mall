@@ -7,7 +7,7 @@
 			<div class="address_left">
 				<i class="iconfont icon-dizhiguanli"></i>
 			</div>
-			<div class="address_middle" v-if="JSON.stringify(addressInfo)!='{}'">
+			<div class="address_middle" v-if="addressInfo.contacts!=''">
 				<div class="address_middle_top clearfix">
 					<span>收货人：{{addressInfo.contacts}}</span>
 					<span>{{addressInfo.phone}}</span>
@@ -20,7 +20,7 @@
 				</div>
 			</div>
 			<div class="address_none" v-else>
-				<span>请选择收货地址</span>
+				<span>+请选择收货地址</span>
 			</div>
 			<div class="address_right">
 				>
@@ -56,7 +56,7 @@
 				<span>买家留言：</span>
 			</div>
 			<div>
-				<input type="text" v-model="remark" placeholder="选填：填写内容已和卖家协商确认">
+				<input type="text" v-model="remarks" placeholder="选填：填写内容已和卖家协商确认">
 			</div>
 		</div>
 		<div class="total">
@@ -64,20 +64,28 @@
 				<span>合计：</span>
 				<span>￥</span>
 				<span>{{total}}</span>
-				<span class="submit_order">提交订单</span>
+				<span class="submit_order" @click="submitOrder">提交订单</span>
 			</div>
 		</div>
 	</div>
 </template>
 <script>
-	import { SelectDefaultAddressByUserId } from '@/js/api';
+	import { SelectDefaultAddressByUserId, AddOrder } from '@/js/api';
+	import { MessageBox, Toast } from 'mint-ui';
 	export default{
 		data(){
 			return{
 				accountInfo: {},
-				addressInfo: {},
+				addressInfo: {
+					contacts: '',
+					phone: '',
+					province: '',
+					city: '',
+					area: '',
+					detailAddress: ''
+				},
 				productList:[],
-				remark: '',
+				remarks: '',
 				total:0
 			}
 		},
@@ -94,22 +102,80 @@
 				SelectDefaultAddressByUserId({userId}).then(data => {
 					let { errMsg, errCode, value, success, extraInfo } = data;
 					if(success){
-						this.addressInfo = value;
+						this.addressInfo = Object.assign(this.addressInfo,value);
 					}
 					else{
 						Toast('查询失败')
 					}
 				});
+			},
+			submitOrder(){
+				let params = {};
+				params.userId = this.accountInfo.id;
+				params.addressId = this.addressInfo.id;
+				params.totalAmount = this.total;
+				params.remarks = this.remarks;
+				params.goodsList = this.productList;
+				MessageBox.confirm('', { 
+					message: '是否确认支付？', 
+					title: '提示', 
+				}).then(action => { 
+					params.status = 1;
+					AddOrder(params).then(data => {
+						let { errMsg, errCode, value, success, extraInfo } = data;
+						if(success){
+							this.$router.push({
+								path: '/orderDetail',
+								query: {
+									orderId: value
+								}
+							})
+						}
+						else{
+							Toast('下单失败');
+						}
+					})
+				}).catch(err => { 
+					params.status = 0;
+					AddOrder(params).then(data => {
+						let { errMsg, errCode, value, success, extraInfo } = data;
+						if(success){
+							this.$router.push({
+								path: '/orderDetail',
+								query: {
+									orderId: value
+								}
+							})
+						}
+						else{
+							Toast('下单失败');
+						}
+					})
+				});
 			}
 		},
 		mounted(){
 			this.accountInfo = this.$store.state.accountInfo;
-			this.productList = JSON.parse(this.$route.query.productInfo);
-			console.log(this.productList);
+			this.productList = JSON.parse(this.$route.query.confirmOrder).goodsList;
 			for(let item of this.productList){
 				this.total+=(item.vipPrice*item.amount);
 			}
-			this.selectDefaultAddressByUserId(this.accountInfo.id);
+			let addressInfo = this.$store.state.confirmOrder.addressInfo;
+			if(JSON.stringify(addressInfo) == '{}'){
+				this.selectDefaultAddressByUserId(this.accountInfo.id);
+			}
+			else{
+				this.addressInfo = Object.assign(addressInfo);
+			}
+		},
+		beforeRouteLeave (to, from, next) {
+			if(to.path!="/clickAddress"){
+				this.$store.commit('chooseAddress',{});
+				next();
+			}
+			else{
+				next();
+			}
 		}
 	}
 </script>

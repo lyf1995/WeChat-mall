@@ -144,18 +144,19 @@
 					});
 				}
 				else{
-					this.$router.push({
-						path:'/confirmOrder',
-						query:{
-							productInfo: JSON.stringify([
-								{
+					let confirmOrder = {};
+					confirmOrder.userId = this.accountInfo.id;
+					confirmOrder.goodsList = [{
 									productId: this.productInfo.id,
 									productName: this.productInfo.name,
 									mainImg: this.productInfo.mainImg,
 									vipPrice: this.productInfo.vipPrice,
 									amount: this.amount
-								}
-							])
+								}];
+					this.$router.push({
+						path:'/confirmOrder',
+						query:{
+							confirmOrder: JSON.stringify(confirmOrder)
 						}
 					})
 				}

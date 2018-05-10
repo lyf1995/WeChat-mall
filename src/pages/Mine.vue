@@ -49,7 +49,9 @@
 	</div>
 </template>
 <script>
+	import { SelectUserById } from '@/js/api';
 	import TabBar from '@/components/TabBar'
+	import { MessageBox, Toast } from 'mint-ui';
 
 	export default{
 		components:{
@@ -78,10 +80,22 @@
 				this.$router.push({
 					path: '/login'
 				})
+			},
+			getUserInfo(){
+
 			}
 		},
 		mounted(){
-			this.accountInfo = this.$store.state.accountInfo;
+			SelectUserById({userId: this.$store.state.accountInfo.id}).then(data =>{
+				let { errMsg, errCode, value, success, extraInfo } = data;
+				console.log(success);
+				if(success){
+					this.accountInfo = value;
+				}
+				else{
+					Toast('用户查询异常');
+				}
+			})
 		}
 	}
 </script>

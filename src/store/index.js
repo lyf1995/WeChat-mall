@@ -5,6 +5,9 @@ Vue.use(Vuex)
 
 const state={
 	accountInfo:{},
+	confirmOrder: {
+		addressInfo:{},
+	},
 	apiHead:{},
 }
 
@@ -16,8 +19,12 @@ const mutations={
 		state.accountInfo = accountInfo;
 		sessionStorage.setItem('accountInfo',JSON.stringify(accountInfo));
 	},
-	initApiHead(state){
-
+	confirmOrder(state,confirmOrder){
+		state.confirmOrder = Object.assign(confirmOrder);
+		sessionStorage.setItem('confirmOrder',JSON.stringify(confirmOrder));
+	},
+	chooseAddress(state,addressInfo){
+		state.confirmOrder.addressInfo = addressInfo;
 	}
 }
 

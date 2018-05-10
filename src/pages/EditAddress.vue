@@ -1,6 +1,6 @@
 <template>
 	<div class="edit_address_wrap">
-		<mt-header title="添加新地址" fixed class="top_title">
+		<mt-header title="编辑地址" fixed class="top_title">
 			<mt-button icon="back" slot="left" @click="goBack"></mt-button>
 			<mt-button slot="right" @click="updateAddress">保存</mt-button>
 		</mt-header>

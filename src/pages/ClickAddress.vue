@@ -5,7 +5,7 @@
 			<mt-button slot="right" @click="gotoEditAddress" class="manage">管理</mt-button>
 		</mt-header>
 		<div class="address_wrap">
-			<div class="address_item" v-for="(item ,indx) in addressList">
+			<div class="address_item" v-for="(item ,indx) in addressList" @click="chooseAddress(item)">
 				<div class="address_middle_top clearfix">
 					<span>收货人：{{item.contacts}}</span>
 					<span>{{item.phone}}</span>
@@ -54,6 +54,10 @@
 						Toast('查询失败');
 					}
 				});
+			},
+			chooseAddress(item){
+				this.$store.commit('chooseAddress',item);
+				this.$router.go(-1);
 			}
 		},
 		mounted(){
