@@ -8,9 +8,12 @@
 			<div class="jifen">积分￥{{accountInfo.money}}</div>
 		</div>
 		<div class="order_info">
-			<mt-cell title="我的订单" is-link to="/order" style="border-bottom: 1px solid #e8e8e8;">
-			  	<span>查看全部订单</span>
-			</mt-cell>
+			<div @click="goToOrder(-1)">
+				<mt-cell title="我的订单" is-link style="border-bottom: 1px solid #e8e8e8;">
+				  	<span>查看全部订单</span>
+				</mt-cell>
+			</div>
+			
 			<div class="order_status clearfix">
 				<div @click="goToOrder(0)">
 					<i class="iconfont icon-dingdanzhuangtaidengdai" style="font-size:30px;"></i>

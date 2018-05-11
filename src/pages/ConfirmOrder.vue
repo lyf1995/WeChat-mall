@@ -70,7 +70,7 @@
 	</div>
 </template>
 <script>
-	import { SelectDefaultAddressByUserId, AddOrder } from '@/js/api';
+	import { SelectDefaultAddressByUserId, AddOrder, DeleteShoppingCar } from '@/js/api';
 	import { MessageBox, Toast } from 'mint-ui';
 	export default{
 		data(){
@@ -82,11 +82,12 @@
 					province: '',
 					city: '',
 					area: '',
-					detailAddress: ''
+					detailAddress: '',
+					shoppingCarIdList: [],
 				},
 				productList:[],
 				remarks: '',
-				total:0
+				total:0,
 			}
 		},
 		methods:{
@@ -134,7 +135,7 @@
 						else{
 							Toast('下单失败');
 						}
-					})
+					});
 				}).catch(err => { 
 					params.status = 0;
 					AddOrder(params).then(data => {
@@ -151,12 +152,29 @@
 							Toast('下单失败');
 						}
 					})
-				});
+				})
+				//批量删除购物车信息
+				let idList = [];
+				for(let item of this.shoppingCarIdList){
+					idList.push({
+						id: item
+					})
+				}
+				DeleteShoppingCar(idList).then(data => {
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						console.log('购物车删除成功');
+					}
+					else{
+						console.log('购物车删除失败')
+					}
+				})
 			}
 		},
 		mounted(){
 			this.accountInfo = this.$store.state.accountInfo;
 			this.productList = JSON.parse(this.$route.query.confirmOrder).goodsList;
+			this.shoppingCarIdList = this.$route.query.shoppingCarIdList?JSON.parse(this.$route.query.shoppingCarIdList) : [];
 			for(let item of this.productList){
 				this.total+=(item.vipPrice*item.amount);
 			}

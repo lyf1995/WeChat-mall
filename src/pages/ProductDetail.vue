@@ -156,7 +156,7 @@
 					this.$router.push({
 						path:'/confirmOrder',
 						query:{
-							confirmOrder: JSON.stringify(confirmOrder)
+							confirmOrder: JSON.stringify(confirmOrder),
 						}
 					})
 				}

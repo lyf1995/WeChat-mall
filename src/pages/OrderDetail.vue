@@ -9,81 +9,153 @@
 			</div>
 			<div class="address_middle">
 				<div class="address_middle_top clearfix">
-					<span>收货人：鲁钺锋</span>
-					<span>17826804660</span>
+					<span>收货人：{{orderInfo.address.contacts}}</span>
+					<span>{{orderInfo.address.phone}}</span>
 				</div>
 				<div class="address_middle_middle">
-					<span>收货地址：浙江省杭州市西湖区留下街道留和路西河公寓10幢</span>
+					<span>收货地址：{{orderInfo.address.province+orderInfo.address.city+orderInfo.address.area+orderInfo.address.detailAddress}}</span>
 				</div>
 			</div>
 		</div>
 		<div class="product_item clearfix">
-			<div class="product">
+			<div class="product" v-for="(item, index) in orderInfo.productsList">
 				<div class="product_img">
-					<img :src="product.mainImg">
+					<img :src="item.goodsMainImage">
 				</div>
 				<div class="product_right">
 					<div class="product_right_name">
-						<span>{{product.productName}}</span>
+						<span>{{item.goodsName}}</span>
 					</div>
 					<div class="product_right_price">
 						<span>￥</span>
-						<span>{{product.price}}</span>
-						<span>x{{product.amount}}</span>
+						<span>{{item.goodsVipPrice}}</span>
+						<span>x{{item.goodsNumber}}</span>
 					</div>
 				</div>
 			</div>	
 			<div class="remarks">
 				<div>
-					<span>买家留言：</span>
-				</div>
-				<div>
-					<input type="text" v-model="product.remark" placeholder="选填：填写内容已和卖家协商确认">
+					<span>买家留言：{{orderInfo.remarks}}</span>
 				</div>
 			</div>
 			<div class="product_item_total">
 				<div class="product_item_right">
-					<span>共{{product.amount}}件商品</span>
+					<span>共{{orderInfo.productAmount}}件商品</span>
 					<span>小计：</span>
 					<span>￥</span>
-					<span>{{product.amount*product.price}}</span>
+					<span>{{orderInfo.totalAmount}}</span>
 				</div>
 			</div>
-			<div class="time">
-				<span>创建时间：2017-01-01</span>
+			<div class="order_number">
+				<span>订单编号：{{orderInfo.number}}</span>
+			</div>
+			<div class="order_time">
+				<span>创建时间：{{orderInfo.orderTime}}</span>
 			</div>
 		</div>
-
-
-
 		<div class="footer">
-			<button class="btn_red">付款</button>
-			<button class="btn_red">确认收货</button>
-			<button>删除</button>
-			<button>取消订单</button>
+			<button class="btn_red" v-if="orderInfo.status == 0" @click.stop="payOrder(orderInfo.id)">付款</button>
+			<button class="btn_red" v-if="orderInfo.status == 2" @click.stop="confirmReceipt(orderInfo.id)">确认收货</button>
+			<button v-if="orderInfo.status == 3" @click.stop="deleteOrder(orderInfo.id)">删除订单</button>
+			<button v-if="orderInfo.status == 0 || orderInfo.status == 1" @click.stop="cancelOrder(orderInfo.id)">取消订单</button>
 		</div>
 	</div>
 </template>
 <script>
+	import { SelectOrderById, ChangeOrderStatus } from '@/js/api';
+	import { Indicator, Toast, MessageBox } from 'mint-ui';
 	export default{
 		data(){
 			return{
-				product:{
-					id:1,
-					productName:'智利泰瑞贵族珍藏佳美娜干红葡萄酒750mL',
-					mainImg:'http://www.taiibao.com/upload/f0e/79e/aa57d0df9a40438784e868a86b_54882_800x800.jpg',
-					price:120,
-					amount:1,
-					remark:'哈哈哈',
+				orderInfo:{
+					id:'',
+					address:{
+						contacts: '',
+						phone: '',
+					},
+					productsList: [],
+					remarks:'',
+					orderTime: ''
 				}
 			}
 		},
 		methods: {
 			goBack(){
 				this.$router.push({
-					path: '/order'
+					path: '/order',
+					query: {
+						type: -1
+					}
 				})
+			},
+			selectOrderById(id){
+				SelectOrderById({id}).then(data =>{
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						this.orderInfo = value;
+						this.orderInfo.productAmount = 0;
+						for(let item of this.orderInfo.productsList){
+							this.orderInfo.productAmount += item.goodsNumber;
+						}
+					}
+					else{
+						Toast('查询失败')
+					}
+				})
+			},
+			payOrder(id){
+				MessageBox.confirm('', { 
+					message: '是否确认支付？', 
+					title: '提示', 
+				}).then(action => { 
+					this.changeOrderStatus(id,1);
+				}).catch(err => { 
+					
+				})
+			},
+			confirmReceipt(id){
+				MessageBox.confirm('', { 
+					message: '是否确认收货？', 
+					title: '提示', 
+				}).then(action => { 
+					this.changeOrderStatus(id,3);
+				}).catch(err => { 
+					
+				})
+			},
+			cancelOrder(id){
+				MessageBox.confirm('', { 
+					message: '是否确认取消订单？', 
+					title: '提示', 
+				}).then(action => { 
+					this.changeOrderStatus(id,4);
+				}).catch(err => { 
+					
+				})
+			},
+			changeOrderStatus(id,status){
+				ChangeOrderStatus({id,status}).then(data =>{
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						if(status == 1){
+							Toast('支付成功');
+						}
+						else if(status == 3){
+							Toast('收货成功')
+						}
+						else if(status == 4){
+							Toast('取消成功')
+						}
+						this.selectOrderById(this.$route.query.id);
+					}
+					else{
+						Toast('操作失败');
+					}
+				});
 			}
+		},
+		created(){
+			this.selectOrderById(this.$route.query.id);
 		}
 	}
 </script>
@@ -201,20 +273,7 @@
 		box-sizing: border-box;
 		line-height: 50px;
 	}
-	.remarks div:nth-child(1){
-		float:left;
-		width:80px;
-	}
-	.remarks div:nth-child(2){
-		margin-left:80px;
-	}
-	.remarks input{
-		width:100%;
-		border:0;
-		outline:none;
-		font-size:14px;
-		margin-top:-2px;
-	}
+
 	.product_item_total{
 		height: 50px;
 		box-sizing: border-box;
@@ -234,15 +293,16 @@
 		font-size: 16px;
 		color: rgb(171, 9, 35);
 	}
-	.time{
+	.order_time,.order_number{
 		height: 30px;
 		line-height: 30px;
 		box-sizing: border-box;
 		border-top: 1px solid #eee;
+		color: #ccc;
 	}
-
-
-
+	.order_time{
+		border-top: 0;
+	}
 	.footer{
 		position: fixed;
 		bottom: 0;

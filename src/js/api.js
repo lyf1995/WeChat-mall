@@ -6,6 +6,8 @@ let base = window.g.ApiUrl;
 export const Login = params =>{ return axios.post(`${base}/user/login`, params).then(res => res.data).catch(error => error); };
 //注册
 export const Regist = params =>{ return axios.post(`${base}/user/regist`, params).then(res => res.data).catch(error => error); };
+//根据userId查询用户信息
+export const SelectUserById = params =>{ return axios.post(`${base}/user/selectUserById`, params).then(res => res.data).catch(error => error); };
 //查询所有商品分类
 export const SelectAllType = params=>{ return axios.post(`${base}/commodity/selectAllType`, params).then(res => res.data).catch(error=>error); };
 //根据商品id查询商品
@@ -36,5 +38,11 @@ export const DeleteShoppingCar = params=>{ return axios.post(`${base}/shoppingCa
 export const UpdateShoppingCar = params=>{ return axios.post(`${base}/shoppingCar/updateShoppingCar`, params).then(res => res.data).catch(error=>error); };
 //添加订单
 export const AddOrder = params=>{ return axios.post(`${base}/order/addOrder`, params).then(res => res.data).catch(error=>error); };
-//根据userId查询用户信息
-export const SelectUserById = params =>{ return axios.post(`${base}/user/selectUserById`, params).then(res => res.data).catch(error => error); };
+//根据用户id和订单状态查询订单信息
+export const SelectOrderByUserId = params =>{ return axios.post(`${base}/order/selectOrderByUserId`, params).then(res => res.data).catch(error => error); };
+//删除订单
+export const DeleteOrder = params =>{ return axios.post(`${base}/order/deleteOrder`, params).then(res => res.data).catch(error => error); };
+//修改订单状态
+export const ChangeOrderStatus = params =>{ return axios.post(`${base}/order/changeOrderStatus`, params).then(res => res.data).catch(error => error); };
+//根据id查询订单信息
+export const SelectOrderById = params =>{ return axios.post(`${base}/order/selectOrderById`, params).then(res => res.data).catch(error => error); };

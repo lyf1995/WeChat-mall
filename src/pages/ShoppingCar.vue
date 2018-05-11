@@ -100,7 +100,8 @@
 				checkedProducts: [],
 				products: [],
 				totalAmount: 0,
-				totalMoney: 0
+				totalMoney: 0,
+				shoppingCarIdList:[],
 			}
 		},
 		methods:{
@@ -142,7 +143,7 @@
 					for(let item of this.shoppingCarList){
 						if(id === item.id){
 							amount = amount + item.goodsNumber;
-							money = money + amount*item.goodsVipPrice;
+							money = money + item.goodsNumber*item.goodsVipPrice;
 						}
 					}
 				}
@@ -155,8 +156,30 @@
 					Toast('您还没有选择宝贝哦');
 				}
 				else{
+					let confirmOrder = {};
+					confirmOrder.goodsList = [];
+					confirmOrder.userId = this.accountInfo.id;
+					for(let item of this.checkedProducts){
+						for(let childItem of this.shoppingCarList){
+							if(item === childItem.id){
+								this.shoppingCarIdList.push(item);
+								let product = {};
+								product.productId = childItem.goodsId;
+								product.productName = childItem.goodsName;
+								product.mainImg = childItem.goodsMainImage;
+								product.vipPrice = childItem.goodsVipPrice;
+								product.amount = childItem.goodsNumber;
+								confirmOrder.goodsList.push(product);
+								continue;
+							}
+						}
+					}
 					this.$router.push({
 						path:'/confirmOrder',
+						query:{
+							confirmOrder: JSON.stringify(confirmOrder),
+							shoppingCarIdList: JSON.stringify(this.shoppingCarIdList)
+						}
 					})
 				}
 			},
