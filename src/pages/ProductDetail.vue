@@ -5,8 +5,8 @@
 		</div>
 		<div class="swipe_wrap">
 			<mt-swipe :auto="3000">
-			  	<mt-swipe-item v-for="(item, index) in productInfo.lunboImgs" :key="index">
-			  		<img :src="item">
+			  	<mt-swipe-item v-for="(item, index) in 3" :key="index">
+			  		<img :src="productInfo.mainImage">
 			  	</mt-swipe-item>
 			</mt-swipe>
 		</div>
@@ -55,7 +55,7 @@
 						<i class="iconfont icon-guanbi"></i>
 					</div>
 					<div class="model_product_img">
-						<img :src="productInfo.mainImg">
+						<img :src="productInfo.mainImage">
 					</div>
 					<div class="model_product_right">
 						<div class="model_product_name">
@@ -149,7 +149,7 @@
 					confirmOrder.goodsList = [{
 									productId: this.productInfo.id,
 									productName: this.productInfo.name,
-									mainImg: this.productInfo.mainImg,
+									mainImage: this.productInfo.mainImage,
 									vipPrice: this.productInfo.vipPrice,
 									amount: this.amount
 								}];
@@ -208,7 +208,7 @@
 	}
 	.swipe_wrap{
 		width: 100%;
-		height: 300px;
+		height: 400px;
 	}
 	.swipe_wrap img{
 		width: 100%;

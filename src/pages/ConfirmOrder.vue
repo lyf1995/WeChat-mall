@@ -29,7 +29,7 @@
 		<div class="product_item clearfix" v-for="(item, index) in productList">
 			<div class="product">
 				<div class="product_img">
-					<img :src="item.mainImg">
+					<img :src="item.mainImage">
 				</div>
 				<div class="product_right">
 					<div class="product_right_name">
@@ -124,11 +124,12 @@
 					params.status = 1;
 					AddOrder(params).then(data => {
 						let { errMsg, errCode, value, success, extraInfo } = data;
+						console.log(value)
 						if(success){
 							this.$router.push({
 								path: '/orderDetail',
 								query: {
-									orderId: value
+									id: value
 								}
 							})
 						}
@@ -144,7 +145,7 @@
 							this.$router.push({
 								path: '/orderDetail',
 								query: {
-									orderId: value
+									id: value
 								}
 							})
 						}
