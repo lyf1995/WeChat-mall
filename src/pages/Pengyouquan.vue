@@ -1,13 +1,13 @@
 <template>
 	<div class="share_wrap">
-		<mt-header title="我的分享" fixed class="top_title">
+		<mt-header title="朋友圈" fixed class="top_title">
 			<mt-button icon="back" slot="left" @click="goBack"></mt-button>
 		</mt-header>
 		<div v-if="!shareList.length" style="text-align:center;padding-top:100px;">
 			<span>暂无分享~</span>
 		</div>
 		<div class="share_list" v-else>
-			<div class="share_item" v-for="(item,index) in shareList" :key="index" @click="gotoShareDetail(item.id)">
+			<div class="share_item" v-for="(item,index) in shareList" :key="index" @click="gotoShareUrl(item.shareUrl)">
 				<div class="share_item_status clearfix">
 					<span>分享时间：{{item.shareTime}}</span>
 				</div>
@@ -34,12 +34,11 @@
 	</div>
 </template>
 <script>
-	import { SelectShareByUserId } from '@/js/api'
+	import { SelectAllShare } from '@/js/api'
 	import { Indicator, Toast } from 'mint-ui';
 	export default{
 		data(){
 			return{
-				accountInfo:{},
 				shareList: [],
 			}
 		},
@@ -49,9 +48,9 @@
 					path: '/mine'
 				})
 			},
-			selectShareByUserId(userId){
+			selectAllShare(){
 				Indicator.open();
-				SelectShareByUserId({userId}).then(data =>{
+				SelectAllShare({}).then(data =>{
 					let { errMsg, errCode, value, success, extraInfo } = data;
 					if(success){
 						this.shareList = value;
@@ -62,18 +61,15 @@
 					Indicator.close();
 				});
 			},
-			gotoShareDetail(id){
+			//跳转
+			gotoShareUrl(url){
 				this.$router.push({
-					path: '/shareDetail',
-					query: {
-						id: id
-					}
+					path: url
 				})
 			}
 		},
 		mounted(){
-			this.accountInfo = this.$store.state.accountInfo;
-			this.selectShareByUserId(this.accountInfo.id);
+			this.selectAllShare();
 		}
 	}
 </script>

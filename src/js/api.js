@@ -46,3 +46,11 @@ export const DeleteOrder = params =>{ return axios.post(`${base}/order/deleteOrd
 export const ChangeOrderStatus = params =>{ return axios.post(`${base}/order/changeOrderStatus`, params).then(res => res.data).catch(error => error); };
 //根据id查询订单信息
 export const SelectOrderById = params =>{ return axios.post(`${base}/order/selectOrderById`, params).then(res => res.data).catch(error => error); };
+//添加分享
+export const AddShare = params =>{ return axios.post(`${base}/share/addShare`, params).then(res => res.data).catch(error => error); };
+//根据用户id查询所有分享
+export const SelectShareByUserId = params =>{ return axios.post(`${base}/share/selectShareByUserId`, params).then(res => res.data).catch(error => error); };
+//查询所有分享
+export const SelectAllShare = params =>{ return axios.post(`${base}/share/selectAllShare`, params).then(res => res.data).catch(error => error); };
+//添加用户点击分享
+export const AddShareUser = params =>{ return axios.post(`${base}/share/addShareUser`, params).then(res => res.data).catch(error => error); };

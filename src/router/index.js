@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '@/store'
 
 const Home = resolve =>require(['@/pages/Home'], resolve);
 const ShoppingCar = resolve =>require(['@/pages/ShoppingCar'], resolve);
@@ -17,11 +18,12 @@ const EditPassword = resolve =>require(['@/pages/EditPassword'], resolve);
 const Login = resolve =>require(['@/pages/Login'], resolve);
 const Order = resolve =>require(['@/pages/Order'], resolve);
 const OrderDetail = resolve =>require(['@/pages/OrderDetail'], resolve);
+const Pengyouquan = resolve =>require(['@/pages/Pengyouquan'], resolve);
 
 Vue.use(Router)
 
-export default new Router({
-  routes: [
+let router = new Router({  
+    routes: [
     {
         path: '/',
         redirect:'/login'
@@ -125,5 +127,32 @@ export default new Router({
         menuShow: false,
         component: Login
     },
+    {
+        path: '/pengyouquan',
+        name: '朋友圈',
+        menuShow: false,
+        component: Pengyouquan
+    }
   ]
 })
+
+router.beforeEach((to, from, next)=>{
+    if(to.path === '/login'){
+        store.commit('initAccount');
+        next();
+    }
+    else if(to.path=='/productDetail'){
+        if(store.state.accountInfo.id){
+            next()
+        }
+        else{
+            console.log(to.fullPath.split('?')[1]);
+            next({path:'/login?'+to.fullPath.split('?')[1]});
+        }
+    }
+    else{
+        next();
+    }
+});
+
+export default router

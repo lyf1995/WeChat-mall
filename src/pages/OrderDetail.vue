@@ -298,7 +298,7 @@
 		line-height: 30px;
 		box-sizing: border-box;
 		border-top: 1px solid #eee;
-		color: #ccc;
+		color: #2c3e50;
 	}
 	.order_time{
 		border-top: 0;

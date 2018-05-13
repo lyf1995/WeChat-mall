@@ -83,10 +83,61 @@
 	</div>
 </template>
 <script>
-	import { SelectCommodityById, AddShoppingCar } from '@/js/api';
+	import { SelectCommodityById, AddShoppingCar, AddShare, AddShareUser } from '@/js/api';
 	import { Indicator, Toast } from 'mint-ui';
 	export default{
 		data(){
+			var _this = this;
+			wx.onMenuShareAppMessage({
+	          	title: '',
+	          	desc: '',
+	          	link: '',
+	          	imgUrl: '',
+	          	trigger: function (res) {
+	            	let params = {};
+	            	params.shareUserId = _this.$route.query.userId;
+	            	params.goodsId = _this.$route.query.commodityId;
+	            	params.shareUrl = _this.$route.path+"?goodsId="+_this.productInfo.id+"&shareUserId="+_this.accountInfo.id+"&shareId=";
+	            	AddShare(params).then(data => {
+	            		let { errMsg, errCode, value, success, extraInfo } = data;
+	            		if(success){
+	            			setTimeout(function(){
+	            				Toast('分享成功');
+	            			},1000);	
+	            		}
+	            		else{
+	            			setTimeout(function(){
+	            				Toast('分享失败');
+	            			},1000)
+	            		}
+	            	});
+	          	},
+	        });
+	        wx.onMenuShareTimeline({
+	          	title: '',
+	          	link: '',
+	          	imgUrl: '',
+	          	trigger: function (res) {
+	            	let params = {};
+	            	params.shareUserId = _this.$route.query.userId;
+	            	params.goodsId = _this.$route.query.commodityId;
+	            	params.shareUrl = _this.$route.path+"?goodsId="+_this.productInfo.id+"&shareUserId="+_this.accountInfo.id+"&shareId=";
+	            	AddShare(params).then(data => {
+	            		let { errMsg, errCode, value, success, extraInfo } = data;
+	            		if(success){
+	            			setTimeout(function(){
+	            				Toast('分享成功');
+	            			},1000);
+	            			
+	            		}
+	            		else{
+	            			setTimeout(function(){
+	            				Toast('分享失败');
+	            			},1000)
+	            		}
+	            	});
+	          	},
+	        });
 			return{
 				accountInfo: {},
 				amount: 1,
@@ -153,6 +204,12 @@
 									vipPrice: this.productInfo.vipPrice,
 									amount: this.amount
 								}];
+					if(this.$store.state.shareInfo.goodsId == this.productInfo.id){
+						confirmOrder.type = 1;
+					}
+					else{
+						confirmOrder.type = 0;
+					}
 					this.$router.push({
 						path:'/confirmOrder',
 						query:{

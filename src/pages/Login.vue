@@ -32,7 +32,7 @@
 	</div>
 </template>
 <script>
-	import { Login, Regist } from '@/js/api'
+	import { Login, Regist, AddShareUser } from '@/js/api'
 	import { Toast } from 'mint-ui';
 	export default{
 		data(){
@@ -59,7 +59,18 @@
 					let {errMsg, errCode, value, extraInfo, success} = data;
 					if(success){
 						_this.$store.commit('keepAccount', value);
-						_this.$router.push({path: '/home'});
+						if(this.$store.state.shareInfo.shareId){
+							_this.$router.push({
+								path:'/productDetail',
+								query:{
+									commodityId:this.$store.state.shareInfo.goodsId,
+									userId: this.$store.state.accountInfo.id,
+								}
+							})
+						}
+						else{
+							_this.$router.push({path: '/home'});
+						}
 					}
 					else{
 						Toast(errMsg);
@@ -85,8 +96,30 @@
 							Login(params).then(data => {
 								let {errMsg, errCode, value, extraInfo, success} = data;
 								if(success){
+									if(this.$store.state.shareInfo.shareId){
+										AddShareUser({shareId: this.$store.state.shareInfo.shareId,status:0,clickUserId:value.id}).then(data =>{
+											let {errMsg, errCode, value, extraInfo, success} = data;
+											if(success){
+												console.log('添加点击分享成功');
+											}
+											else{
+												console.log('添加点击分享,失败');
+											}
+										});
+									}		
 									_this.$store.commit('keepAccount', value);
-									_this.$router.push({path: '/home'});
+									if(this.$store.state.shareInfo.shareId){
+										_this.$router.push({
+											path:'/productDetail',
+											query:{
+												commodityId:this.$store.state.shareInfo.goodsId,
+												userId: this.$store.state.accountInfo.id,
+											}
+										})
+									}
+									else{
+										_this.$router.push({path: '/home'});
+									}
 								}
 								else{
 									Toast(errMsg);
@@ -100,6 +133,16 @@
 				}
 				
 			}
+		},
+		mounted(){
+			let shareInfo = {};
+			if(this.$route.query.shareUserId&&this.$route.query.goodsId&&this.$route.query.shareId){
+				shareInfo.shareUserId = this.$route.query.shareUserId;
+				shareInfo.goodsId = this.$route.query.goodsId;
+				shareInfo.shareId = this.$route.query.shareId;
+				this.$store.commit('keepShareInfo',shareInfo);
+			}
+			console.log('shareInfo',this.$store.state.shareInfo);
 		}
 	}
 </script>

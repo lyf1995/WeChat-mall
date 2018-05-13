@@ -80,6 +80,7 @@
 				});
 			},
 			exit(){
+				this.$store.commit('initShareInfo');
 				this.$router.push({
 					path: '/login'
 				})

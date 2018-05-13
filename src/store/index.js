@@ -9,6 +9,11 @@ const state={
 		addressInfo:{},
 	},
 	apiHead:{},
+	shareInfo:{
+		goodsId: '',
+		shareId: '',
+		shareUserId: ''
+	}
 }
 
 const mutations={
@@ -25,7 +30,14 @@ const mutations={
 	},
 	chooseAddress(state,addressInfo){
 		state.confirmOrder.addressInfo = addressInfo;
-	}
+	},
+	initShareInfo(state){
+		state.shareInfo = {};
+	},
+	keepShareInfo(state,shareInfo){
+		state.shareInfo = Object.assign(state.shareInfo,shareInfo);
+		sessionStorage.setItem('shareInfo',JSON.stringify(shareInfo));
+	},
 }
 
 

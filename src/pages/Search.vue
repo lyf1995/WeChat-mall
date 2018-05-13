@@ -38,6 +38,7 @@
 	export default {
 		data() {
 			return {
+				accountInfo: {},
 				name: '',
 				productList: []
 			}
@@ -68,12 +69,18 @@
 					Indicator.close();
 				})
 			},
-			goToDetail(){
-
+			goToDetail(id){
+				this.$router.push({
+					path:'/productDetail',
+					query:{
+						commodityId:id,
+						userId: this.accountInfo.id
+					}
+				})
 			}
 		},
 		mounted() {
-
+			this.accountInfo = this.$store.state.accountInfo;
 		},
 	}
 </script>

@@ -157,6 +157,7 @@
 				}
 				else{
 					let confirmOrder = {};
+					confirmOrder.type = 0;
 					confirmOrder.goodsList = [];
 					confirmOrder.userId = this.accountInfo.id;
 					for(let item of this.checkedProducts){
@@ -166,7 +167,7 @@
 								let product = {};
 								product.productId = childItem.goodsId;
 								product.productName = childItem.goodsName;
-								product.mainImg = childItem.goodsMainImage;
+								product.mainImage = childItem.goodsMainImage;
 								product.vipPrice = childItem.goodsVipPrice;
 								product.amount = childItem.goodsNumber;
 								confirmOrder.goodsList.push(product);

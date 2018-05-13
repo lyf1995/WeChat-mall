@@ -70,11 +70,12 @@
 	</div>
 </template>
 <script>
-	import { SelectDefaultAddressByUserId, AddOrder, DeleteShoppingCar } from '@/js/api';
+	import { SelectDefaultAddressByUserId, AddOrder, DeleteShoppingCar, AddShareUser } from '@/js/api';
 	import { MessageBox, Toast } from 'mint-ui';
 	export default{
 		data(){
 			return{
+				shareInfo: {},
 				accountInfo: {},
 				addressInfo: {
 					contacts: '',
@@ -117,59 +118,78 @@
 				params.totalAmount = this.total;
 				params.remarks = this.remarks;
 				params.goodsList = this.productList;
-				MessageBox.confirm('', { 
-					message: '是否确认支付？', 
-					title: '提示', 
-				}).then(action => { 
-					params.status = 1;
-					AddOrder(params).then(data => {
-						let { errMsg, errCode, value, success, extraInfo } = data;
-						console.log(value)
-						if(success){
-							this.$router.push({
-								path: '/orderDetail',
-								query: {
-									id: value
+				if(!params.addressId){
+					Toast('请选择收货地址');
+				}
+				else{
+					MessageBox.confirm('', { 
+						message: '是否确认支付？', 
+						title: '提示', 
+					}).then(action => { 
+						params.status = 1;
+						AddOrder(params).then(data => {
+							let { errMsg, errCode, value, success, extraInfo } = data;
+							if(success){
+								for(let item of this.productList){
+									if(item.productId == this.$store.state.shareInfo.goodsId){
+										AddShareUser({shareId: this.$store.state.shareInfo.shareId,status:1,clickUserId:this.accountInfo.id}).then(data =>{
+											let {errMsg, errCode, value, extraInfo, success} = data;
+											if(success){
+												console.log('购买分享商品成功');
+											}
+											else{
+												console.log('购买分享商品成功');
+											}
+											this.$store.commit("initShareInfo");
+										});
+									};
+									break;
 								}
-							})
-						}
-						else{
-							Toast('下单失败');
-						}
-					});
-				}).catch(err => { 
-					params.status = 0;
-					AddOrder(params).then(data => {
-						let { errMsg, errCode, value, success, extraInfo } = data;
-						if(success){
-							this.$router.push({
-								path: '/orderDetail',
-								query: {
-									id: value
-								}
-							})
-						}
-						else{
-							Toast('下单失败');
-						}
+								this.$router.push({
+									path: '/orderDetail',
+									query: {
+										id: value
+									}
+								})
+							}
+							else{
+								Toast('下单失败');
+							}
+						});
+					}).catch(err => { 
+						params.status = 0;
+						AddOrder(params).then(data => {
+							let { errMsg, errCode, value, success, extraInfo } = data;
+							if(success){
+								this.$router.push({
+									path: '/orderDetail',
+									query: {
+										id: value
+									}
+								})
+							}
+							else{
+								Toast('下单失败');
+							}
+						})
 					})
-				})
-				//批量删除购物车信息
-				let idList = [];
-				for(let item of this.shoppingCarIdList){
-					idList.push({
-						id: item
+					//批量删除购物车信息
+					let idList = [];
+					for(let item of this.shoppingCarIdList){
+						idList.push({
+							id: item
+						})
+					}
+					DeleteShoppingCar(idList).then(data => {
+						let { errMsg, errCode, value, success, extraInfo } = data;
+						if(success){
+							console.log('购物车删除成功');
+						}
+						else{
+							console.log('购物车删除失败')
+						}
 					})
 				}
-				DeleteShoppingCar(idList).then(data => {
-					let { errMsg, errCode, value, success, extraInfo } = data;
-					if(success){
-						console.log('购物车删除成功');
-					}
-					else{
-						console.log('购物车删除失败')
-					}
-				})
 			}
 		},
 		mounted(){
