@@ -52,6 +52,8 @@ export const AddShare = params =>{ return axios.post(`${base}/share/addShare`, p
 export const SelectShareByUserId = params =>{ return axios.post(`${base}/share/selectShareByUserId`, params).then(res => res.data).catch(error => error); };
 //查询所有分享
 export const SelectAllShare = params =>{ return axios.post(`${base}/share/selectAllShare`, params).then(res => res.data).catch(error => error); };
+//朋友圈查询所有分享
+export const SelectAllSharePengyouquan = params =>{ return axios.post(`${base}/share/selectAllSharePengyouquan`, params).then(res => res.data).catch(error => error); };
 //添加用户点击分享
 export const AddShareUser = params =>{ return axios.post(`${base}/share/addShareUser`, params).then(res => res.data).catch(error => error); };
 //根据分享id查看分享点击详情

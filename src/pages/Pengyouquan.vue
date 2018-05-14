@@ -34,7 +34,7 @@
 	</div>
 </template>
 <script>
-	import { SelectAllShare } from '@/js/api'
+	import { SelectAllSharePengyouquan } from '@/js/api'
 	import { Indicator, Toast } from 'mint-ui';
 	export default{
 		data(){
@@ -48,9 +48,9 @@
 					path: '/mine'
 				})
 			},
-			selectAllShare(){
+			selectAllSharePengyouquan(){
 				Indicator.open();
-				SelectAllShare({}).then(data =>{
+				SelectAllSharePengyouquan({}).then(data =>{
 					let { errMsg, errCode, value, success, extraInfo } = data;
 					if(success){
 						this.shareList = value;
@@ -69,7 +69,7 @@
 			}
 		},
 		mounted(){
-			this.selectAllShare();
+			this.selectAllSharePengyouquan();
 		}
 	}
 </script>

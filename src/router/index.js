@@ -157,6 +157,10 @@ router.beforeEach((to, from, next)=>{
             next({path:'/login?'+to.fullPath.split('?')[1]});
         }
     }
+    else if(to.path == '/pengyouquan'){
+        store.commit('initAccount');
+        next();
+    }
     else{
         next();
     }

@@ -22,9 +22,9 @@
 			    <mt-field label="" placeholder="请输入手机号" v-model="registraInfo.phone"></mt-field>
 				<mt-field label="" type="password" placeholder="请输入密码" v-model="registraInfo.password"></mt-field>
 				<mt-field label="" type="password" placeholder="请确认密码" v-model="registraInfo.comfirmPassword"></mt-field>
-				<mt-field label="" placeholder="短信验证码" v-model="registraInfo.SMScode">
+				<!-- <mt-field label="" placeholder="短信验证码" v-model="registraInfo.SMScode">
 			  		<mt-button type="default"  size="small" style="width: 100px;margin-left: 10px;">获取验证码</mt-button>
-				</mt-field>
+				</mt-field> -->
 				<mt-button type="default" class="btn" @click="registerSubmit" size="large">注册</mt-button>
 			   	</mt-tab-container-item>
 			</mt-tab-container>
