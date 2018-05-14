@@ -54,3 +54,5 @@ export const SelectShareByUserId = params =>{ return axios.post(`${base}/share/s
 export const SelectAllShare = params =>{ return axios.post(`${base}/share/selectAllShare`, params).then(res => res.data).catch(error => error); };
 //添加用户点击分享
 export const AddShareUser = params =>{ return axios.post(`${base}/share/addShareUser`, params).then(res => res.data).catch(error => error); };
+//根据分享id查看分享点击详情
+export const SelectShareUserByShareId = params =>{ return axios.post(`${base}/share/selectShareUserByShareId`, params).then(res => res.data).catch(error => error); };

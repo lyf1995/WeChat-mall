@@ -80,16 +80,10 @@
 					DeleteAddress({id}).then(data =>{
 						let { errMsg, errCode, value, success, extraInfo } = data;
 						if(success){
-							this.$message({
-								message: '删除成功',
-								type: 'success'
-							})
+							Toast('删除成功');
 							this.getAddressInfoList();
 						}else{
-							this.$message({
-								message: '删除失败',
-								type: 'error'
-							})
+							Toast('删除失败');
 						}
 					});
 				});

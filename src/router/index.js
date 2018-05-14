@@ -14,6 +14,7 @@ const AddAddress = resolve =>require(['@/pages/AddAddress'], resolve);
 const EditAddress = resolve =>require(['@/pages/EditAddress'], resolve);
 const PersonInfo = resolve =>require(['@/pages/PersonInfo'], resolve);
 const Share = resolve =>require(['@/pages/Share'], resolve);
+const ShareDetail = resolve =>require(['@/pages/ShareDetail'], resolve);
 const EditPassword = resolve =>require(['@/pages/EditPassword'], resolve);
 const Login = resolve =>require(['@/pages/Login'], resolve);
 const Order = resolve =>require(['@/pages/Order'], resolve);
@@ -114,6 +115,12 @@ let router = new Router({
         name: '我的分享',
         menuShow: false,
         component: Share
+    },
+    {
+        path: '/shareDetail',
+        name: '分享详情',
+        menuShow: false,
+        component: ShareDetail
     },
     {
         path: '/editPassword',
