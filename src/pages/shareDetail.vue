@@ -1,6 +1,6 @@
 <template>
 	<div class="share_detail_wrap">
-		<mt-header title="我的分享" fixed class="top_title">
+		<mt-header title="分享详情" fixed class="top_title">
 			<mt-button icon="back" slot="left" @click="goBack"></mt-button>
 		</mt-header>
 		<div v-if="!shareUserList.length" style="text-align:center;padding-top:100px;">
