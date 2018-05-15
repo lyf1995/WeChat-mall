@@ -2,15 +2,15 @@
 	<div class="home_wrap">
 		<header>
 			<div class="search_wrap">
-				<div class="search_bar">
+				<div class="search_bar" @click="goToSearch">
 					<span>搜索</span>
 				</div>
 			</div>
 			<div class="product_type">
 				<ul>
 					<li :class="{'type-active':typeId === 0}" @click="selectType(0)">推荐</li>
-					<li v-for="(item, index) in productCategorylist" @click="selectType(item.id)" :class="{'type-active':typeId === item.id}">
-						{{item.name}}
+					<li v-for="(item, index) in typeList" @click="selectType(item.id)" :class="{'type-active':typeId === item.id}">
+						{{item.typeName}}
 					</li>
 				</ul>
 			</div>
@@ -24,33 +24,24 @@
 				</mt-swipe>
 			</div>
 			<div class="product_list">
-				<div class="product_item" v-for="item in productList">
-					<div class="title" v-if="typeId === 0">
-						<div class="title_line">
-							<div class="title_name">{{item.CategoryName}}</div>
-						</div>
+				<div class="product" v-for="(item, index) in productList" :key="index" @click="goToDetail(item.id)">
+					<div class="product_img">
+						<img :src="item.mainImage">
 					</div>
-					<div class="type_image" v-if="typeId === 0">
-						<img src="../assets/images/haixianshuichan.jpg">
-					</div>
-					<div class="product" v-for="(items, index) in item.productInfo" :key="index" @click="goToDetail(items.id)">
-						<div class="product_img">
-							<img :src="items.productPhoto">
+					<div class="product_info">
+						<div class="product_name">
+							{{item.name}}
 						</div>
-						<div class="product_info">
-							<div class="product_name">
-								{{items.productName}}
+						<div class="product_price">
+							<div class="vip_price">
+								<span>￥</span>
+								<!-- <span>会员价￥</span> -->
+								<span>{{item.vipPrice|formatMoney}}</span>
 							</div>
-							<div class="product_price">
-								<div class="vip_price">
-									<span>会员价￥:</span>
-									<span>{{items.marketPrice}}</span>
-								</div>
-								<div class="normal_price">
-									<div class="line"></div>
-									<span>零售价￥:</span>
-									<span>{{items.marketPrice+20|formatMoney}}</span>
-								</div>
+							<div class="normal_price">
+								<div class="line"></div>
+								<span>零售价￥</span>
+								<span>{{item.retailPrice|formatMoney}}</span>
 							</div>
 						</div>
 					</div>
@@ -61,7 +52,9 @@
 	</div>
 </template>
 <script>
+	import { SelectAllType, SelectCommodityByTypeId } from '@/js/api'
 	import TabBar from '@/components/TabBar'
+	import { Indicator, Toast } from 'mint-ui';
 
 	export default{
 		components:{
@@ -69,63 +62,11 @@
 		},
 		data(){
 			return{
+				accountInfo: {},
 				//分类选中项
 				typeId:0,
-				productList:[
-					{
-						"id": 1,
-						"categoryImage": "",
-						"CategoryName": "食品生鲜",
-						"productInfo": [{
-							"marketPrice": 158.00,
-							"productPhoto": "http://www.taiibao.com/upload/177/b4f/577016229836f576b4b5b5cc33_247488_800x800.jpg",
-							"id": 3,
-							"productName": "乌拉圭原装进口牛腱子(1.8-2.0KG/块)"
-						}, {
-							"marketPrice": 118.00,
-							"productPhoto": "http://www.taiibao.com/upload/65f/f1c/28b4a168645afa1c5dead3c85d_38552_800x800.jpg",
-							"id": 6,
-							"productName": "冰岛Clearice大西洋鳕鱼(去皮4段) 560G/袋"
-						}, {
-							"marketPrice": 139.00,
-							"productPhoto": "http://www.taiibao.com/upload/177/b4f/577016229836f576b4b5b5cc33_247488_800x800.jpg",
-							"id": 30,
-							"productName": "乌拉圭原装进口牛腱子 (1.6-1.8KG/块)"
-						}, {
-							"marketPrice": 119.00,
-							"productPhoto": "http://www.taiibao.com/upload/eeb/3d1/e36d2d4937186748db2fab2542_89668_800x800.jpg",
-							"id": 31,
-							"productName": "乌拉圭原装进口牛蹄筋 约1kg/袋"
-						}]
-					},
-					{
-						"categoryImage": "",
-						"CategoryName": "粮油副食",
-						"Id": 13,
-						"productInfo": [{
-							"marketPrice": 120.00,
-							"productPhoto": "http://www.taiibao.com//upload/e60/db8/1365783c2915a6f4dffcbd7bc2_48049_800x800.jpg",
-							"Id": 64,
-							"productName": "意大利Italissima斯玛葡萄籽油 1L/瓶"
-						}, {
-							"marketPrice": 73.00,
-							"productPhoto": "http://www.taiibao.com//upload/ec8/e27/bdb3661857946e6b8f2b15c2b5_56484_800x800.jpg",
-							"Id": 204,
-							"productName": "法国鲸鱼牌粗粒海盐（非碘食用盐）180g/瓶"
-						}, {
-							"marketPrice": 34.00,
-							"productPhoto": "http://www.taiibao.com//upload/91c/1aa/eed6de2d01f3cad35a5f404862_237539_800x800.jpg",
-							"Id": 239,
-							"productName": "澳大利亚SAXA赛克萨粗粒海盐500g/袋"
-						}, {
-							"marketPrice": 118.00,
-							"productPhoto": "http://www.taiibao.com//upload/935/a89/d9cc1acb60aafaa5275f2265ed_295690_800x800.jpg",
-							"Id": 248,
-							"productName": "土耳其 ZADE牌 葵花籽油 5L/桶"
-						}]
-					}
-				],
-				productCategorylist: [{id:2,name:'食品生鲜'},{id:3,name:'果蔬休闲'},{id:4,name:'精粮副食'},{id:5,name:'酒水茶饮'}],
+				productList:[],
+				typeList: [],
 			}
 		},
 		filters:{
@@ -138,18 +79,53 @@
 			}
 		},
 		methods:{
+			//获取所有商品分类
+			selectAllType(){
+				SelectAllType({id: '',typeName: ''}).then(data =>{
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						this.typeList = value;
+					}
+					else{
+						Toast(errMsg);
+					}
+				});
+			},
 			selectType(id){
+				Indicator.open();
 				this.typeId = id;
+				SelectCommodityByTypeId({typeId:this.typeId}).then(data =>{
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						this.productList = value;
+					}
+					else{
+						Toast(errMsg);
+					}
+					Indicator.close();
+				});
 			},
 			//跳转到商品详情页面
 			goToDetail(id){
 				this.$router.push({
 					path:'/productDetail',
 					query:{
-						productId:id
+						commodityId:id,
+						userId: this.accountInfo.id
 					}
 				})
-			}
+			},
+			//跳转到搜索页面
+			goToSearch(){
+				this.$router.push('/search')
+			},
+		},
+		mounted(){
+			//查询所有分类
+			this.selectAllType();
+			//查询推荐商品
+			this.selectType(this.typeId);
+			this.accountInfo = this.$store.state.accountInfo;
 		}
 	}
 </script>
@@ -207,10 +183,11 @@
 	    font-size: 18px;
 	}
 	.swipe_wrap{
-		height: 160px;
+		height: 180px;
 	}
 	.swipe_wrap img{
 		width: 100%;
+		max-height: 180px;
 	}
 	.title{
 		height: 42px;

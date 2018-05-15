@@ -8,24 +8,24 @@
 			</mt-header>
 			<div class="product_wrap">
 					<el-checkbox-group v-model="checkedProducts" @change="checkedProductsChange">
-						<div class="product_item" v-for="(item, index) in productList">
+						<div class="product_item" v-for="(item, index) in shoppingCarList">
 							<div class="checkbox_wrap">
 								<el-checkbox :key="item.id" class="middle" :label="item.id"></el-checkbox>
 							</div>
 							<div class="product">
 								<div class="product_img">
-									<img :src="item.mainImg">
+									<img :src="item.goodsMainImage">
 								</div>
 								<div class="product_right">
 									<div class="product_right_name">
-										<span>{{item.productName}}</span>
+										<span>{{item.goodsName}}</span>
 									</div>
 									<div class="product_right_price">
 										<span>￥</span>
-										<span>{{item.price}}</span>
+										<span>{{item.goodsVipPrice}}</span>
 										<div class="amount">
 											<span @click="opAmount(-1,item)">-</span>
-											<span>{{item.amount}}</span>
+											<span>{{item.goodsNumber}}</span>
 											<span @click="opAmount(1,item)">+</span>
 										</div>
 									</div>
@@ -47,24 +47,24 @@
 			</mt-header>
 			<div class="product_wrap">
 					<el-checkbox-group v-model="checkedProducts" @change="checkedProductsChange">
-						<div class="product_item" v-for="(item, index) in productList">
+						<div class="product_item" v-for="(item, index) in shoppingCarList">
 							<div class="checkbox_wrap">
 								<el-checkbox :key="item.id" class="middle" :label="item.id"></el-checkbox>
 							</div>
 							<div class="product">
 								<div class="product_img">
-									<img :src="item.mainImg">
+									<img :src="item.goodsMainImage">
 								</div>
 								<div class="product_right">
 									<div class="product_right_name">
-										<span>{{item.productName}}</span>
+										<span>{{item.goodsName}}</span>
 									</div>
 									<div class="product_right_price">
 										<span>￥</span>
-										<span>{{item.price}}</span>
+										<span>{{item.goodsVipPrice}}</span>
 										<div class="amount">
 											<span @click="opAmount(-1,item)">-</span>
-											<span>{{item.amount}}</span>
+											<span>{{item.goodsNumber}}</span>
 											<span @click="opAmount(1,item)">+</span>
 										</div>
 									</div>
@@ -82,6 +82,7 @@
 	</div>
 </template>
 <script>
+	import { SelectAllShoppingCar, AddShoppingCar, DeleteShoppingCar, UpdateShoppingCar } from '@/js/api'
 	import TabBar from '@/components/TabBar'
 	import { Toast } from 'mint-ui';
 
@@ -91,39 +92,37 @@
 		},
 		data(){
 			return{
+				accountInfo: {},
 				deleteStatus:false,
-				productList:[
-					{
-						"id": 11,
-						"productName": "智利泰瑞贵族珍藏佳美娜干红葡萄酒750mL",
-						"price": 120.00,
-						"amount": 1,
-						"mainImg": "http://www.taiibao.com/upload/f0e/79e/aa57d0df9a40438784e868a86b_54882_800x800.jpg",
-					},
-					{
-						"id": 12,
-						"productName": "智利泰瑞贵族珍藏佳美娜干红葡萄酒750mL",
-						"price": 120.00,
-						"amount": 2,
-						"mainImg": "http://www.taiibao.com/upload/f0e/79e/aa57d0df9a40438784e868a86b_54882_800x800.jpg",
-					}
-				],
+				shoppingCarList:[],
 				isIndeterminate: true,
 				checkAll: false,
 				checkedProducts: [],
-				products: [11,12],
+				products: [],
 				totalAmount: 0,
-				totalMoney: 0
+				totalMoney: 0,
+				shoppingCarIdList:[],
 			}
 		},
 		methods:{
 			opAmount(op,item){
-				if(item.amount === 1&&op === -1)
+				if(item.goodsNumber === 1&&op === -1)
 					return;
 				else{
-					item.amount+=op;
-					this.getTotal();
-				}
+					item.goodsNumber+=op;
+					let params = {};
+					params.id = item.id;
+					params.goodsNumber = item.goodsNumber;
+					UpdateShoppingCar(params).then(data => {
+						let { errMsg, errCode, value, success, extraInfo } = data;
+						if(success){
+							this.getTotal();
+						}
+						else{
+							Toast(errMsg);
+						}
+					});
+				}	
 			},
 			checkAllChange(val){
 				this.checkedProducts = val ? this.products : [];
@@ -141,10 +140,10 @@
 				let amount = 0;
 				let money = 0
 				for(let id of this.checkedProducts){
-					for(let item of this.productList){
+					for(let item of this.shoppingCarList){
 						if(id === item.id){
-							amount = amount + item.amount;
-							money = money + amount*item.price;
+							amount = amount + item.goodsNumber;
+							money = money + item.goodsNumber*item.goodsVipPrice;
 						}
 					}
 				}
@@ -157,15 +156,73 @@
 					Toast('您还没有选择宝贝哦');
 				}
 				else{
+					let confirmOrder = {};
+					confirmOrder.type = 0;
+					confirmOrder.goodsList = [];
+					confirmOrder.userId = this.accountInfo.id;
+					for(let item of this.checkedProducts){
+						for(let childItem of this.shoppingCarList){
+							if(item === childItem.id){
+								this.shoppingCarIdList.push(item);
+								let product = {};
+								product.productId = childItem.goodsId;
+								product.productName = childItem.goodsName;
+								product.mainImage = childItem.goodsMainImage;
+								product.vipPrice = childItem.goodsVipPrice;
+								product.amount = childItem.goodsNumber;
+								confirmOrder.goodsList.push(product);
+								continue;
+							}
+						}
+					}
 					this.$router.push({
 						path:'/confirmOrder',
+						query:{
+							confirmOrder: JSON.stringify(confirmOrder),
+							shoppingCarIdList: JSON.stringify(this.shoppingCarIdList)
+						}
 					})
 				}
 			},
 			//删除购物车
 			deleteCar(){
-				console.log(this.checkedProducts);
-			}
+				// console.log(this.checkedProducts);
+				let params = [];
+				for(let item of this.checkedProducts){
+					params.push({id: item});
+				}
+				DeleteShoppingCar(params).then(data => {
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						Toast('删除成功');
+						this.getShoppingCarInfoList();
+					}
+					else{
+						Toast('删除失败');
+					}
+				});
+				
+			},
+			getShoppingCarInfoList(){
+				let params = {};
+				params.userId = this.accountInfo.id;
+				SelectAllShoppingCar(params).then(data => {
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						this.shoppingCarList = value;
+						for(let item of this.shoppingCarList){
+							this.products.push(item.id);
+						}
+					}
+					else{
+						Toast(errMsg);
+					}
+				})
+			},
+		},
+		mounted(){
+			this.accountInfo = this.$store.state.accountInfo;
+			this.getShoppingCarInfoList();
 		}
 	}
 </script>

@@ -4,23 +4,23 @@
 			<mt-button icon="back" slot="left" @click="goBack"></mt-button>
 		</mt-header>
 		<div class="order_status clearfix">
-			<div :class="{ 'actived': -1 === activeType }" @click="selectOrder(-1)">
+			<div :class="{ 'actived': -1 == activeType }" @click="selectOrder(-1)">
 				<i class="iconfont icon-weibiaoti2fuzhi07"></i>
 				<p style="color: inherit;">全部</p>
 			</div>
-			<div :class="{ 'actived': 0 === activeType }" @click="selectOrder(0)">
+			<div :class="{ 'actived': 0 == activeType }" @click="selectOrder(0)">
 				<i class="iconfont icon-dingdanzhuangtaidengdai"></i>
 				<p>待付款</p>
 			</div>
-			<div :class="{ 'actived': 1 === activeType }" @click="selectOrder(1)">
+			<div :class="{ 'actived': 1 == activeType }" @click="selectOrder(1)">
 				<i class="iconfont icon-distribution"></i>
 				<p>待发货</p>
 			</div>
-			<div :class="{ 'actived': 2 === activeType }" @click="selectOrder(2)">
+			<div :class="{ 'actived': 2 == activeType }" @click="selectOrder(2)">
 				<i class="iconfont icon-daodashijian"></i>
 				<p>待收货</p>
 			</div>
-			<div :class="{ 'actived': 3 === activeType }" @click="selectOrder(3)">
+			<div :class="{ 'actived': 3 == activeType }" @click="selectOrder(3)">
 				<i class="iconfont icon-icon5"></i>
 				<p>已完成</p>
 			</div>
@@ -28,33 +28,38 @@
 		<div class="order_list">
 			<div class="order_item" v-for="(item,index) in orderList" :key="index" @click="gotoOrderDetail(item.id)">
 				<div class="order_item_status clearfix">
-					<span>代付款</span>
+					<span>订单编号：{{item.number}}</span>
+					<span v-if="item.status == 0">代付款</span>
+					<span v-if="item.status == 1">待发货</span>
+					<span v-if="item.status == 2">待收货</span>
+					<span v-if="item.status == 3">已完成</span>
+					<span v-if="item.status == 4">已取消</span>
 				</div>
-				<div class="product">
+				<div class="product" v-for="(childItem, index) in item.productsList">
 					<div class="product_img">
-						<img :src="item.mainImg">
+						<img :src="childItem.goodsMainImage">
 					</div>
 					<div class="product_right">
 						<div class="product_right_name">
-							<span>{{item.productName}}</span>
+							<span>{{childItem.goodsName}}</span>
 						</div>
 						<div class="product_right_price">
 							<span>￥</span>
-							<span>{{item.price}}</span>
-							<span>x{{item.amount}}</span>
+							<span>{{childItem.goodsVipPrice}}</span>
+							<span>x{{childItem.goodsNumber}}</span>
 						</div>
 					</div>
 				</div>
 				<div class="total clearfix">
-					<span>￥{{item.amount*item.price}}</span>
+					<span>￥{{item.totalAmount}}</span>
 					<span>合计：</span>
-					<span>共{{item.amount}}件商品</span>
+					<span>共{{item.productAmount}}件商品</span>
 				</div>
 				<div class="btn">
-					<button class="btn_red">付款</button>
-					<button class="btn_red">确认收货</button>
-					<button>删除</button>
-					<button>取消订单</button>
+					<button class="btn_red" v-if="item.status == 0" @click.stop="payOrder(item.id)">付款</button>
+					<button class="btn_red" v-if="item.status == 2" @click.stop="confirmReceipt(item.id)">确认收货</button>
+					<button v-if="item.status == 3" @click.stop="deleteOrder(item.id)">删除</button>
+					<button v-if="item.status == 0 || item.status == 1" @click.stop="cancelOrder(item.id)">取消订单</button>
 				</div>
 			</div>
 		</div>
@@ -62,44 +67,14 @@
 	</div>
 </template>
 <script>
+	import { selectUserById, SelectOrderByUserId, ChangeOrderStatus, DeleteOrder } from '@/js/api';
+	import { Indicator, Toast, MessageBox } from 'mint-ui';
 	export default{
 		data(){
 			return{
+				accountInfo:{},
 				activeType:-1,
-				orderList:[
-					{
-						id:1,
-						productName:'智利泰瑞贵族珍藏佳美娜干红葡萄酒750mL',
-						mainImg:'http://www.taiibao.com/upload/f0e/79e/aa57d0df9a40438784e868a86b_54882_800x800.jpg',
-						price:120,
-						amount:1,
-						remark:'哈哈哈',
-					},
-					{
-						id:2,
-						productName:'智利泰瑞贵族珍藏佳美娜干红葡萄酒750mL',
-						mainImg:'http://www.taiibao.com/upload/f0e/79e/aa57d0df9a40438784e868a86b_54882_800x800.jpg',
-						price:120,
-						amount:2,
-						remark:'啊啊啊啊',
-					},
-					{
-						id:2,
-						productName:'智利泰瑞贵族珍藏佳美娜干红葡萄酒750mL',
-						mainImg:'http://www.taiibao.com/upload/f0e/79e/aa57d0df9a40438784e868a86b_54882_800x800.jpg',
-						price:120,
-						amount:2,
-						remark:'啊啊啊啊',
-					},
-					{
-						id:2,
-						productName:'智利泰瑞贵族珍藏佳美娜干红葡萄酒750mL',
-						mainImg:'http://www.taiibao.com/upload/f0e/79e/aa57d0df9a40438784e868a86b_54882_800x800.jpg',
-						price:120,
-						amount:2,
-						remark:'啊啊啊啊',
-					},
-				],
+				orderList:[],
 			}
 		},
 		methods:{
@@ -110,6 +85,13 @@
 			},
 			selectOrder(type){
 				this.activeType = type;
+				this.$router.push({
+					path: '/order',
+					query: {
+						type: this.activeType
+					}
+				})
+				this.selectOrderByUserId(this.accountInfo.id,this.activeType);
 			},
 			gotoOrderDetail(id){
 				this.$router.push({
@@ -118,7 +100,97 @@
 						id: id
 					}
 				})
+			},
+			selectOrderByUserId(userId,status){
+				let params = {};
+				params.userId = userId;
+				params.status = status;
+				SelectOrderByUserId(params).then(data => {
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						this.orderList = value;
+						for(let item of this.orderList){
+							item.productAmount = 0;
+							for(let childItem of item.productsList){
+								item.productAmount += childItem.goodsNumber
+							}
+						}
+					}
+					else{
+						Toast('查询异常');
+					}
+				});
+			},
+			deleteOrder(id){
+				DeleteOrder({id}).then(data =>{
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						Toast('删除成功');
+						this.selectOrderByUserId(this.accountInfo.id,this.activeType);
+					}
+					else{
+						Toast('删除失败')
+					}
+				});
+			},
+			payOrder(id){
+				MessageBox.confirm('', { 
+					message: '是否确认支付？', 
+					title: '提示', 
+				}).then(action => { 
+					this.changeOrderStatus(id,1);
+				}).catch(err => { 
+					
+				})
+			},
+			confirmReceipt(id){
+				MessageBox.confirm('', { 
+					message: '是否确认收货？', 
+					title: '提示', 
+				}).then(action => { 
+					this.changeOrderStatus(id,3);
+				}).catch(err => { 
+					
+				})
+			},
+			cancelOrder(id){
+				MessageBox.confirm('', { 
+					message: '是否确认取消订单？', 
+					title: '提示', 
+				}).then(action => { 
+					this.changeOrderStatus(id,4);
+				}).catch(err => { 
+					
+				})
+			},
+			changeOrderStatus(id,status){
+				ChangeOrderStatus({id,status}).then(data =>{
+					let { errMsg, errCode, value, success, extraInfo } = data;
+					if(success){
+						if(status == 1){
+							Toast('支付成功');
+						}
+						else if(status == 3){
+							Toast('收货成功')
+						}
+						else if(status == 4){
+							Toast('取消成功')
+						}
+						this.selectOrderByUserId(this.accountInfo.id,this.activeType);
+					}
+					else{
+						Toast('操作失败');
+					}
+				});
 			}
+		},
+		mounted(){
+			this.accountInfo = this.$store.state.accountInfo;
+			this.activeType = this.$route.query.type;
+			this.selectOrderByUserId(this.accountInfo.id,this.activeType);
+		},
+		created(){
+			this.activeType = this.$route.query.type;
 		}
 	}
 </script>
@@ -163,7 +235,7 @@
 		color: #ab0923 !important;
 	}
 	.order_list{
-		padding-top: 90px;
+		padding-top: 140px;
 	}
 	.order_item{
 		background: #fff;
@@ -173,7 +245,7 @@
 		padding: 10px;
 		border-bottom: 1px solid #eee;
 	}
-	.order_item_status span{
+	.order_item_status span:nth-child(2){
 		float:right;
 		color: rgb(171, 9, 35);
 	}

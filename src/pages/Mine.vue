@@ -4,13 +4,16 @@
 			<div class="photo">
 				<img src="../assets/images/touxiang.jpg" height="300" width="300"/>
 			</div>
-			<div class="phone">17826804660</div>
-			<div class="jifen">积分￥10</div>
+			<div class="phone">{{accountInfo.phone}}</div>
+			<div class="jifen">积分￥{{accountInfo.money}}</div>
 		</div>
 		<div class="order_info">
-			<mt-cell title="我的订单" is-link to="/order" style="border-bottom: 1px solid #e8e8e8;">
-			  	<span>查看全部订单</span>
-			</mt-cell>
+			<div @click="goToOrder(-1)">
+				<mt-cell title="我的订单" is-link style="border-bottom: 1px solid #e8e8e8;">
+				  	<span>查看全部订单</span>
+				</mt-cell>
+			</div>
+			
 			<div class="order_status clearfix">
 				<div @click="goToOrder(0)">
 					<i class="iconfont icon-dingdanzhuangtaidengdai" style="font-size:30px;"></i>
@@ -44,12 +47,14 @@
 				<p>我的分享</p>
 			</div>
 		</div>	
-		<div class="connect">客服电话：111-111-1111</div>
+		<mt-button type="default" class="btn" @click="exit" size="large">退出登陆</mt-button>
 		<tab-bar></tab-bar>
 	</div>
 </template>
 <script>
+	import { SelectUserById } from '@/js/api';
 	import TabBar from '@/components/TabBar'
+	import { MessageBox, Toast } from 'mint-ui';
 
 	export default{
 		components:{
@@ -57,7 +62,7 @@
 		},
 		data(){
 			return{
-				
+				accountInfo:{}
 			}
 		},
 		methods:{
@@ -73,8 +78,29 @@
 				this.$router.push({
 					path: '/'+path
 				});
+			},
+			exit(){
+				this.$store.commit('initShareInfo');
+				this.$router.push({
+					path: '/login'
+				})
+			},
+			getUserInfo(){
+
 			}
 		},
+		mounted(){
+			SelectUserById({userId: this.$store.state.accountInfo.id}).then(data =>{
+				let { errMsg, errCode, value, success, extraInfo } = data;
+				console.log(success);
+				if(success){
+					this.accountInfo = value;
+				}
+				else{
+					Toast('用户查询异常');
+				}
+			})
+		}
 	}
 </script>
 <style scoped>
@@ -85,6 +111,7 @@
 		min-height: 100vh;
 		text-align: left;
 		overflow: hidden;
+		box-sizing: border-box;
 	}
 	.person_info{
 		background: #c7000a url(../assets/images/my-bk.png) bottom center no-repeat;

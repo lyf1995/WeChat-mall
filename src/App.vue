@@ -45,42 +45,42 @@ export default {
 
 /*修改element-ui样式*/
 .el-checkbox__input.is-checked .el-checkbox__inner{
-  background-color: rgb(171, 9, 35);
-  border-color: rgb(171, 9, 35);
+  background-color: rgb(171, 9, 35) !important;
+  border-color: rgb(171, 9, 35) !important;
 }
 .el-checkbox__input.is-checked+.el-checkbox__label{
-  color: rgb(171, 9, 35);
+  color: rgb(171, 9, 35) !important;
 }
 .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
-  background-color: rgb(171, 9, 35);
-  border-color: rgb(171, 9, 35);
+  background-color: rgb(171, 9, 35) !important;
+  border-color: rgb(171, 9, 35) !important;
 }
 .el-checkbox__input.is-disabled+span.el-checkbox__label{
-  color: rgb(171, 9, 35);
+  color: rgb(171, 9, 35) !important;
 }
 .shoppingCar_wrap .el-checkbox__inner{
-  width: 20px;
-  height: 20px;
-  border-radius: 10px;
-  line-height: 20px;
-  text-align: center;
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 10px !important;
+  line-height: 20px !important;
+  text-align: center !important;
 }
 .shoppingCar_wrap .el-checkbox__inner::after{
-  top: 2px;
-  left: 7px;
-  height: 10px;
+  top: 2px !important;
+  left: 7px !important;
+  height: 10px !important;
 }
 .shoppingCar_wrap .el-checkbox__input.is-indeterminate .el-checkbox__inner::before{
-  top: 8px;
+  top: 8px !important;
 }
 .checkbox_wrap .el-checkbox__label{
-  display: none;
+  display: none !important;
 }
 .shoppingCar_wrap .el-checkbox__input.is-indeterminate .el-checkbox__inner{
-  background: #fff;
-  border-color: #dcdfe6;
+  background: #fff !important;
+  border-color: #dcdfe6 !important;
 }
 .shoppingCar_wrap .el-checkbox__input.is-indeterminate .el-checkbox__inner::before{
-  display: none;
+  display: none !important;
 }
 </style>
